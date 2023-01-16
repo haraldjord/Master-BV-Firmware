@@ -1079,7 +1079,7 @@ motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to ma
 
     fsm.state = INIT; // Initialize state machine
 
-    while (1) 
+    while (1) // Will this be included in next commit??
     {
      
      if(updateFSM){
