@@ -1,2 +1,1 @@
-# Master-BV-Firmware
-Buoyancy vehicle firmware 
+# Thesis Firmware !
