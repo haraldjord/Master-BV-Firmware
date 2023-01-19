@@ -51,6 +51,7 @@ typedef struct
   bool BLEgotoConfig;/**< Flag to signal BLE command state transition to configure state.*/
   bool BLEstartMission;/**< Flag to signal BLE command state transition to mission state.*/
   bool hallEffectButton;/**< Flag to signal hall effect button interrupt.*/
+  bool calibratePressureSensor; /**< Flag to signal BLE command state transition calibrat. */
 }FSM_t;
 
 extern FSM_t fsm;

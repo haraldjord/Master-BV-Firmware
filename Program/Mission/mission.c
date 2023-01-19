@@ -46,6 +46,7 @@ void missionInit(){
    mission.currentMission.depth = mission.missionNr[0].depth;
    mission.currentMission.time  = mission.missionNr[0].time; // timer compare value at current mission time
    mission.MeasuredData.measuredDepth = 0.001;  // Initialize to 1 mm
+   mission.MeasuredData.pressureSensorOffset = 0; // Initialized to 0
      
    mission.pidData.kp = PID_kP;
    mission.pidData.ki = PID_kI;
@@ -88,6 +89,7 @@ void prepareMission(){
   stopBatteryMeasureTimer();
 
   SAADCdataReady = false;
+  sampleSensorData = false;
 }
 /**@snippet [Prepare mission]*/
 
@@ -119,8 +121,8 @@ void runMission(){
           if(sampleSensorData){
             sampleSensorData = false;
             nrfx_saadc_sample();
-            readTMP117(&tempMSB, &tempLSB);
-            receiveTMP117 = true;
+            /*readTMP117(&tempMSB, &tempLSB);
+            receiveTMP117 = true; */  //I2C bus not working properly, ignore temperature sensor
            }
 
            if(SAADCdataReady){
@@ -146,7 +148,8 @@ void runMission(){
               setPistonPosition();
                 
             }
-
+            
+            /*
             if(TMP117dataReady){
               TMP117dataReady = false;
               int16_t temp = ((tempMSB << 8) | tempLSB);
@@ -154,7 +157,7 @@ void runMission(){
               //printf("tempM+L: 0x%x + 0x%x\n\r",tempMSB,tempLSB);
               //printf("temp: %d\n\r",temp);
               //printf("temperatur: %f\n\r",mission.MeasuredData.outside_temperature);
-            }
+            //} Ignore temperature sensor (not working properly)
 
         // If low Battery, abort mission and go to low power state.
         if(mission.MeasuredData.battery <= LOW_POWER_THRESHOLD){
@@ -168,12 +171,12 @@ void runMission(){
         
 
         __WFE();
-
+        /*
         if(fsm.hallEffectButton){
           fsm.hallEffectButton = false;
           i = mission.nrOfMissions;
           mission.missionFinished = mission.nrOfMissions;
-         }
+         }*/ // hallEffect not working properly... 
       }
 
      stopMissiontimer();
@@ -200,12 +203,12 @@ void runMission(){
 
 void CalcPressureAndDepth(void)
 {
-   EMA_state = (EMA_alpha*mission.MeasuredData.pressure) + ((1-EMA_alpha)*EMA_state); /**< Exponential Moving Average (EMA) filtering*/
+   EMA_state = (EMA_alpha*mission.MeasuredData.pressure) + ((1-EMA_alpha)*EMA_state); /**< Exponential Moving Average (EMA) filtering on RAW pressure voltage*/
    mission.MeasuredData.batteryVoltage = ((mission.MeasuredData.battery/16383.0)*24.0)+SAADC_VOLTAGE_ERROR;
    mission.MeasuredData.pressureVoltage = ((EMA_state/16383)*(9.0/2.0))+SAADC_VOLTAGE_ERROR;
    mission.MeasuredData.psi = ((mission.MeasuredData.pressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE)-(mission.pidData.atmosphericPressure-PSI_1ATM_PRESSURE));
    mission.MeasuredData.pascal = mission.MeasuredData.psi*PSI_TO_PASCAL;
-   mission.MeasuredData.measuredDepth = (mission.MeasuredData.psi)*PSI_TO_MH2O;
+   mission.MeasuredData.measuredDepth = ((mission.MeasuredData.psi)*PSI_TO_MH2O + mission.MeasuredData.pressureSensorOffset);
    //printf("-------------------------------------\n\r");
    //printf("Voltage: %f\n\r",mission.MeasuredData.pressureVoltage);
    //printf("psi: %f\n\r",mission.MeasuredData.psi);
@@ -232,18 +235,21 @@ void missionLogInit(){
 
 void updateMissionLog(){
 
-   missionLog.timeStamp = mission.timeStamp;
-   missionLog.missionNr = mission.missionFinished + 1;
-   missionLog.setpoint  = mission.currentMission.depth;
-   missionLog.pistonPosition  = mission.pidData.pistonPosition;
-   missionLog.PIDoutput = mission.pidData.output;
-   missionLog.pressureVoltage = mission.MeasuredData.pressureVoltage;
-   missionLog.pressureDepth   = mission.MeasuredData.measuredDepth;
-   missionLog.pressurePsi     = mission.MeasuredData.psi;
-   missionLog.pressurePascal  = mission.MeasuredData.pascal;
-   missionLog.batteryVoltage  = mission.MeasuredData.batteryVoltage;
-   missionLog.temperature     = mission.MeasuredData.outside_temperature;
-   missionLog.motionData      = 0; // ICM motion sensor not configured
+
+   if (mission.timeStamp != 0){ // avoid logging when time is zero
+     missionLog.timeStamp       = mission.timeStamp;
+     missionLog.missionNr       = mission.missionFinished + 1;
+     missionLog.setpoint        = mission.currentMission.depth;
+     missionLog.pistonPosition  = mission.pidData.pistonPosition;
+     missionLog.PIDoutput       = mission.pidData.output;
+     missionLog.pressureVoltage = mission.MeasuredData.pressureVoltage;
+     missionLog.pressureDepth   = mission.MeasuredData.measuredDepth;
+     missionLog.pressurePsi     = mission.MeasuredData.psi;
+     missionLog.pressurePascal  = mission.MeasuredData.pascal;
+     missionLog.batteryVoltage  = mission.MeasuredData.batteryVoltage;
+     missionLog.temperature     = mission.MeasuredData.outside_temperature;
+     missionLog.motionData      = 0; // ICM motion sensor not configured
+    }
 }
 /**@snippet [Update mission log]*/
 

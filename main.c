@@ -72,6 +72,8 @@ bool sendNUS = false;           /**< Flag to signal Nordic UART Service to send 
 bool motorStopped = false;      /**< Flag to signal if motor is stopped or need to be stopped       */
 bool isAdvertising = false;     /**< Flag to signal if advertising or not                           */
 bool bottomLimit = false;       /**< Flag to signal when bottom limit switch is reached             */
+bool readPressureSensor = false;
+//float pressureOffset = 0;
 
 mission_t mission;              /**< Create mission struct instance */
 FSM_t fsm;                      /**< Create Finite State Machine struct instance*/
@@ -1033,6 +1035,72 @@ void readTMP117(uint8_t * tempMSB, uint8_t * tempLSB){
  }
 
 
+ void calibratePressureSensor(){
+  float PressureVoltage = 0;
+  float PSI = 0;
+  float DEPTH = 0;
+  float DEPTH_sum = 0;
+  int n_measurement = 0;
+  float depthOffset = 0;
+  bool readyToCalibrate = false;
+  bool finnishCalibrating = false;
+  uint8_t initiated = false;
+  readPressureSensor = false;
+  uint8_t LED_Status = 2; // 2 --> initiate LED
+  enablePressureSensor();
+  startSampleSensorDatatimer();
+  while(!finnishCalibrating){ // calibrate pressure sensor tryout:
+/*
+    if (!initiated){
+    printf("Depth sum: %f\n\r", DEPTH_sum);
+    PressureVoltage=0, PSI=0, DEPTH=0, DEPTH_sum=0;
+    initiated = true;
+    readPressureSensor = false;
+    }*/
+
+    if(SAADCdataReady){
+        SAADCdataReady = false;
+        PressureVoltage = ((mission.MeasuredData.pressure/16383.0)*(9.0/2.0))+SAADC_VOLTAGE_ERROR;
+        //printf("pressure voltage: %f\n\r", PressureVoltage);
+
+        LED_Status = blinkLED(1,1,1, LED_Status);
+      
+
+        PSI = ((PressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE)-(mission.pidData.atmosphericPressure-PSI_1ATM_PRESSURE));
+        //printf("PSI value: %f\n\r", PSI);
+        DEPTH = PSI*PSI_TO_MH2O;
+        if (DEPTH>40) /*Somehow the first measuement give 60 meters depth, which is dominant in the average calculation.*/
+            DEPTH = 0;
+        else 
+            n_measurement ++;
+      
+        DEPTH_sum += DEPTH;
+        if (n_measurement >= 50) //make x measurements befor calculating average value
+            readyToCalibrate = true;
+      
+        printf("Meassured depth: %f\n\r", DEPTH);
+      }
+   
+    if(readPressureSensor){ // Set to true by timer, every 0.5 seconds 
+        readPressureSensor = false;
+        nrfx_saadc_sample();
+      }
+
+    if(readyToCalibrate){
+    // obtained pressure meassurement when vehicle is floating on surface should be 0 meter (from top of vehicle)
+        mission.MeasuredData.pressureSensorOffset = DEPTH_sum/n_measurement;
+        printf("Depth offset: %f\n\r", depthOffset);
+        /*disablePressureSensor();
+        stopSampleSensorDatatimer();*/
+        finnishCalibrating = true;
+    }
+  }
+  disablePressureSensor();
+  stopSampleSensorDatatimer();
+
+ }
+
+
 
 /**@brief Function for application main entry.
  */
@@ -1067,7 +1135,7 @@ int main(void)
     uart_init();
     app_timer_stop_all();
     saadc_init();
-motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to make sure they are enabled when motor is running*/
+    motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to make sure they are enabled when motor is running*/
 
 
     
@@ -1078,10 +1146,24 @@ motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to ma
     missionInit();  // Initialize Mission
 
     fsm.state = INIT; // Initialize state machine
+    
+    //calibratePressureSensor(); // remove to menue later...
+    
 
+    
+    char initHall = 0;
+    bool hallCountStop = false;
     while (1) 
     {
      
+      if (initHall == 10){
+        fsm.hallEffectButton = true;
+        hallCountStop = true;
+        initHall = 100;
+        } // workaround to enter BLE state when hall effekt button doesn't work properly
+      if (!hallCountStop)
+        initHall ++;
+
      if(updateFSM){
       updateFSM = false;
       FSM();  

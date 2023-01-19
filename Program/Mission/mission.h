@@ -66,6 +66,7 @@ typedef struct
 typedef struct
 {
    uint32_t battery;            /**< raw battery value from SAAADC*/
+   float pressureSensorOffset;  /**< pressure sensor offset in meters*/
    float batteryVoltage;        /**< Battery value in volts*/
    float pressure;              /**< raw pressure sensor value from SAAADC*/
    float pressureVoltage;       /**< Pressure value in volts*/

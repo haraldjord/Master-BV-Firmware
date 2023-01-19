@@ -7,6 +7,7 @@
 extern FSM_t fsm;
 extern mission_t mission;
 extern bool sampleSensorData;
+extern bool readPressureSensor;
 extern bool updateFSM;
 extern bool missionLogUpdated;
 extern bool motorStopped;
@@ -61,6 +62,8 @@ static void repeatedBattery_timer_handler(void * p_context)
 static void sampleSensorData_timer_handler(void * p_context)
 {
   sampleSensorData = true;
+  readPressureSensor = true;
+  //printf("Inside sampleSensorData handler\n\r");
 }
 
 /**@brief Update mission log timer handler.*/
