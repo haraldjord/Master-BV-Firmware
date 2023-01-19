@@ -32,6 +32,7 @@ nrfx_saadc_event_handler_t saadc_handler(nrfx_saadc_evt_t const * p_event)
           mission.MeasuredData.battery = p_event->data.done.p_buffer[0];
           mission.MeasuredData.pressure = p_event->data.done.p_buffer[1];
           
+          //printf("Raw pressure voltage: %f\n\r", mission.MeasuredData.pressure);
           if (mission.MeasuredData.battery > 0)
             SAADCdataReady = true;
         }

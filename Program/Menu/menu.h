@@ -94,6 +94,15 @@ void printConfigVehicleMenu(void);
 */
 void printTransferDataMenu(void);
 
+/**@brief print start calibrate pressure sensor message over BLE to client.
+*/
+void printStartCalibratePressureSensorMSG(void);
+
+/**@brief print finished calibrate pressure sensor message over BLE to client.
+*/
+void printFinishedCalibratePressureSensorMSG(void);
+
+
 /**@brief Transfer all mission log files from SD card over BLE to client.
 */
 void transferAllFiles(void);

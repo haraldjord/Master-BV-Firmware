@@ -26,7 +26,7 @@ void setConfigValue(char * value)
   float floatValue;
   int   intValue;
   getValue = false;
-
+  
   switch(configVariable){
     case M1DEPTH:
       floatValue = atof(value);
@@ -105,6 +105,11 @@ void setConfigValue(char * value)
       mission.pidData.atmosphericPressure = floatValue;
       sendNUS = true;
       break;
+    
+    /*
+    case OFFSETPRESSURESENSOR:
+
+    */
     default: NRF_LOG_INFO("Unknown value in setConfigValue()");
   }
 }
@@ -152,6 +157,11 @@ void mainMenu(int option)
         fsm.BLEgotoConfig = true;
         break;
 
+    
+    case 7:
+        NRF_LOG_INFO("Calibrating pressure sensor");
+        fsm.calibratePressureSensor = true;
+    
     case 9:
         NRF_LOG_INFO("Option 9\n");
         currentMenu = MAINMENU;
@@ -311,6 +321,16 @@ void configVehicleMenu(int option)
       getValue = true;
       configVariable = ATM_PRESSURE;
      break;
+  
+    /*
+    case 6:
+      NRF_LOG_INFO("Option 6\n");
+      uint8_t calibrate_msg = "place vehicle in water when calibrating pressure sensor.";
+      msgLength = sizeof(calibrate_msg);
+      nus_send(calibrate_msg, msgLength);
+      pressureOffset = calibratePressureSensor();
+      configVariable = pressureOffset; 
+    /**/
 
     case 9:
       NRF_LOG_INFO("Option 9\n");
@@ -364,6 +384,7 @@ void transferDataMenu(int option)
        transferDataFlag = true;
        fileOption = DELETE_ONE;
       break;
+
 
     case 9:
         NRF_LOG_INFO("Option 9\n");
@@ -423,7 +444,7 @@ void transferData(char * fileCmd){
 
 void printMainMenu(){
  
-    uint8_t mainMenu[167] = "*****-- Main Menu -- *****\r#Number\tOption\r#1\tSet Mission Data\r#2\tConfigure Vehicle\r#3\tData Files\r#4\tStart Mission\r#5\tGo to Idle\r#6\tGo to Configure\r#9\tReprint Main Menu";
+    uint8_t mainMenu[196] = "*****-- Main Menu -- *****\r#Number\tOption\r#1\tSet Mission Data\r#2\tConfigure Vehicle\r#3\tData Files\r#4\tStart Mission\r#5\tGo to Idle\r#6\tGo to Configure\r#7\tCalibrate pressure sensor\r#9\tReprint Main Menu";
     nus_send(mainMenu, sizeof(mainMenu));
 }
 /**@snippet [print main menu over BLE to client]*/
@@ -487,6 +508,32 @@ void printTransferDataMenu(){
 }
 /**@snippet [print Trasnfer Data menu over BLE to client]*/
 
+
+void printStartCalibratePressureSensorMSG(){
+  uint8_t data0[BLE_NUS_MAX_DATA_LEN] = "";
+  uint8_t data1[BLE_NUS_MAX_DATA_LEN] = "";
+
+  uint16_t len0=0, len1=0;
+
+  len0 = sprintf(data0, "****-- Start calibrating Pressure Sensor --****");
+  len1 = sprintf(data1, "Make sure the vehicle is floating on water surface");
+
+  nus_send(data0, len0);
+  nus_send(data1, len1);
+}
+
+void printFinishedCalibratePressureSensorMSG(){
+  uint8_t data0[BLE_NUS_MAX_DATA_LEN] = "";
+  uint8_t data1[BLE_NUS_MAX_DATA_LEN] = "";
+  uint16_t len0=0, len1=0;
+  
+  len0 = sprintf(data0, "*****-- Finnish calibrating pressure sensor --****");
+  len1 = sprintf(data1, "Offset of: %f meters is corrected for.", mission.MeasuredData.pressureSensorOffset);
+  //printf("calculated pressure offset: %f", mission.MeasuredData.pressureSensorOffset);
+  
+  nus_send(data0, len0);
+  nus_send(data1, len1);
+}
 
 void transferAllFiles(){
     

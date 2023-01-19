@@ -163,6 +163,37 @@ void startLED( void )
 /** @snippet [Start PWM module] */
 
 
+uint8_t blinkLED(uint16_t REDduty, uint16_t GREENduty, uint16_t BLUEduty, uint8_t LED_Status){
+    /*Initiate with LED_Status = 3, and feed back "LED_Status" variable to make the LED blink*/
+    
+    switch (LED_Status){
+      case 0:
+        // LED off       
+        stopLED();
+        LED_Status = 1;
+        return LED_Status;
+        break;
+      case 1:
+        // LED on
+        startLED();
+        LED_Status = 0;
+        return LED_Status;
+        break;
+      case 2:
+        // Initiate RGB LED light
+        stopLED();
+        updateLED(REDduty, GREENduty, BLUEduty);
+        LED_Status = 1;
+        return LED_Status;
+        break;
+      default:
+      NRF_LOG_INFO("undefinded LED satus, when calibrating pressure sensor");      
+        
+      }
+
+}
+
+
 void testLED()
 {
   for(int i = 0; i < 10; i++)

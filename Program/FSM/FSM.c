@@ -1,6 +1,7 @@
 
 
 #include "FSM.h"
+#include "menu.h"
 
 extern mission_t mission;
 
@@ -18,12 +19,14 @@ extern mission_t mission;
 /**@brief handler to go to initialization state.*/
 systemState_t InitStateHandler(void)
 {
+    NRF_LOG_INFO("Go to state: INIT");
     return INIT;  /**< Go to INIT state.*/
 }
 
 /**@brief handler to go to idle state.*/
 systemState_t IdleStateHandler(void)
 {
+   NRF_LOG_INFO("Go to state: IDLE");
    return IDLE; /**< Go to IDLE state.*/
 }
 
@@ -54,6 +57,14 @@ systemState_t MissionFinishedHandler(void){
     NRF_LOG_INFO("MissionFinished. Go to state: PickUp");
     return PICKUP; /**< Go to PICKUP state.*/
 }
+
+/*
+/**@Brief handler to calibrate pressure sensor*/
+/*systemState_t calibratePressureSensor(void){
+    NRF_LOG_INFO("calibrate pressure sensor. Go to state calibrate");
+    return CALIBRATEPRESSURESENSOR;
+
+}*/
 
 /**@brief handler to go to failure state upon aborted mission.
 *
@@ -201,6 +212,17 @@ NRF_LOG_INFO("CONFIGURE state");
         else if(fsm.BLEgotoConfig){
           fsm.BLEgotoConfig = false;
           fsm.nextState = fsm.state;
+        }
+        
+        else if(fsm.calibratePressureSensor){
+          fsm.calibratePressureSensor = false;
+          printStartCalibratePressureSensorMSG();
+          calibratePressureSensor();
+          printFinishedCalibratePressureSensorMSG();
+          stopLED();
+
+          fsm.nextState = ConfigureStateHandler();
+          fsm.stateInitialized = false;
         }
         else
           fsm.nextState = fsm.state;

@@ -1336,7 +1336,7 @@
 // <e> I2S_ENABLED - nrf_drv_i2s - I2S peripheral driver - legacy layer
 //==========================================================
 #ifndef I2S_ENABLED
-#define I2S_ENABLED 0
+#define I2S_ENABLED 1
 #endif
 // <o> I2S_CONFIG_SCK_PIN - SCK pin  <0-31>
 
@@ -1908,7 +1908,7 @@
 // <e> NRFX_I2S_ENABLED - nrfx_i2s - I2S peripheral driver
 //==========================================================
 #ifndef NRFX_I2S_ENABLED
-#define NRFX_I2S_ENABLED 0
+#define NRFX_I2S_ENABLED 1
 #endif
 // <o> NRFX_I2S_CONFIG_SCK_PIN - SCK pin  <0-31>
 
@@ -2046,7 +2046,7 @@
 // <e> NRFX_I2S_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef NRFX_I2S_CONFIG_LOG_ENABLED
-#define NRFX_I2S_CONFIG_LOG_ENABLED 0
+#define NRFX_I2S_CONFIG_LOG_ENABLED 1
 #endif
 // <o> NRFX_I2S_CONFIG_LOG_LEVEL  - Default Severity level
 
@@ -3645,7 +3645,7 @@
 
 // </e>
 
-// </e> NRFX_SYSTICK_ENABLED - nrfx_systick
+// <e> NRFX_SYSTICK_ENABLED - nrfx_systick
 #ifndef NRFX_SYSTICK_ENABLED
 #define NRFX_SYSTICK_ENABLED 1
 #endif
@@ -5748,7 +5748,7 @@
 // </h>
 //==========================================================
 
-// </h>
+// </e>
 //==========================================================
 
 // <h> nRF_Drivers_External
@@ -7192,7 +7192,7 @@
 // <q> NRF_FPRINTF_FLAG_AUTOMATIC_CR_ON_LF_ENABLED  - For each printed LF, function will add CR.
 
 #ifndef NRF_FPRINTF_FLAG_AUTOMATIC_CR_ON_LF_ENABLED
-#define NRF_FPRINTF_FLAG_AUTOMATIC_CR_ON_LF_ENABLED 1
+#define NRF_FPRINTF_FLAG_AUTOMATIC_CR_ON_LF_ENABLED 0
 #endif
 
 // <q> NRF_FPRINTF_DOUBLE_ENABLED  - Enable IEEE-754 double precision formatting.
@@ -11408,6 +11408,7 @@
 
 #ifndef NRF_BLE_QWR_BLE_OBSERVER_PRIO
 #define NRF_BLE_QWR_BLE_OBSERVER_PRIO 3
+
 #endif
 
 // <o> NRF_BLE_SCAN_OBSERVER_PRIO
@@ -11649,4 +11650,3 @@
 // <<< end of configuration section >>>
 #endif //SDK_CONFIG_H
 
-/** @} */
