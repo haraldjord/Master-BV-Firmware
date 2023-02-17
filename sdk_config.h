@@ -5757,7 +5757,7 @@
 // <q> NRF_TWI_SENSOR_ENABLED  - nrf_twi_sensor - nRF TWI Sensor module
 
 #ifndef NRF_TWI_SENSOR_ENABLED
-#define NRF_TWI_SENSOR_ENABLED 0
+#define NRF_TWI_SENSOR_ENABLED 1
 #endif
 
 // </h>
@@ -10898,7 +10898,7 @@
 // <2=> BLOCK_IF_FIFO_FULL
 
 #ifndef SEGGER_RTT_CONFIG_DEFAULT_MODE
-#define SEGGER_RTT_CONFIG_DEFAULT_MODE 0
+#define SEGGER_RTT_CONFIG_DEFAULT_MODE 1
 #endif
 
 // </h>

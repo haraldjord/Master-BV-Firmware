@@ -43,6 +43,7 @@
 #include "main.h"
 #include "FSM.h"
 
+
 /** @file
  *
  * @defgroup main main project files
@@ -73,6 +74,7 @@ bool motorStopped = false;      /**< Flag to signal if motor is stopped or need 
 bool isAdvertising = false;     /**< Flag to signal if advertising or not                           */
 bool bottomLimit = false;       /**< Flag to signal when bottom limit switch is reached             */
 bool readPressureSensor = false;
+bool TMP117Ready = false;       /**< Flag to signal data from TMP117 is ready */
 //float pressureOffset = 0;
 
 mission_t mission;              /**< Create mission struct instance */
@@ -105,8 +107,11 @@ void limitSwitchBottom_handler(void){
 * @note at this point firmware is not yet written to do anything upper limit switch interrupt.
 */
 void limitSwitchTop_handler(void){
-
+  // High to Low interrupt (active high)
+  /*Interrupt signal from module isn't work as suposed to.*/
   NRF_LOG_INFO("Limit Switch TOP_Interrupt_HANDLER");
+
+
 
 }
 
@@ -119,6 +124,7 @@ void TMP_temp_Alert_Interrupt_handler(void){
 
   NRF_LOG_INFO("TMP117_ALERT_Interrupt_HANDLER");
 
+  TMP117Ready = true;
 }
 
 /**@brief ICM20948 Motion Sensor Interrupt handler.
@@ -129,6 +135,7 @@ void TMP_temp_Alert_Interrupt_handler(void){
 void motionSensorInterrupt_handler(void){
 
   NRF_LOG_INFO("MotionSensor_Interrupt_HANDLER");
+  printf("MotionSensor_Interrupt_HANDLER");
 
 }
 
@@ -810,7 +817,8 @@ static void gpio_init(void)
     activeLow_Interrupt.pull = NRF_GPIO_PIN_PULLUP;
 
     // Hall Effect Interrupt Configuration
-    nrfx_gpiote_in_config_t hallEffect_Interrupt = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(false);  /**< False: not IN_EVENT, to save power.*/
+//    nrfx_gpiote_in_config_t hallEffect_Interrupt = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(false);  /**< False: not IN_EVENT, to save power.*/
+    nrfx_gpiote_in_config_t hallEffect_Interrupt = NRFX_GPIOTE_CONFIG_IN_SENSE_HITOLO(false);
     activeLow_Interrupt.pull = NRF_GPIO_PIN_PULLUP;
 
     nrfx_gpiote_in_config_t activeHigh_Interrupt = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(true);
@@ -1021,18 +1029,17 @@ void stopAdvertising(){
 * @param[out] tempMSB 8 most significant bits representing temperature
 * @param[out] tempLSB 8 least significant bits representing temperature
 */
-void readTMP117(uint8_t * tempMSB, uint8_t * tempLSB){
+/*void readTMP117(uint8_t * tempMSB, uint8_t * tempLSB){
 
-  uint8_t tempReg = 0x00; /**<Temperature register within TMP117 */
-
+  uint8_t tempReg = 0x00; /Temperature register within TMP117 
   // Get Temperature
-  TWIMtxrx(TMP117, tempReg, tempMSB);
+  TWIMtxrx(TMP117_module, tempReg, tempMSB);
   while(isTWIMbusy());
   TWIMrx(TMP117,tempMSB);
   while(isTWIMbusy());
   TWIMrx(TMP117,tempLSB);
   while(isTWIMbusy());
- }
+ }*/ //OBSOLETE
 
 
  void calibratePressureSensor(){
@@ -1064,7 +1071,6 @@ void readTMP117(uint8_t * tempMSB, uint8_t * tempLSB){
         //printf("pressure voltage: %f\n\r", PressureVoltage);
 
         LED_Status = blinkLED(1,1,1, LED_Status);
-      
 
         PSI = ((PressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE)-(mission.pidData.atmosphericPressure-PSI_1ATM_PRESSURE));
         //printf("PSI value: %f\n\r", PSI);
@@ -1104,8 +1110,7 @@ void readTMP117(uint8_t * tempMSB, uint8_t * tempLSB){
 
 /**@brief Function for application main entry.
  */
-int main(void)
-{
+int main(void){
     pwm_init(); /**< Initialize PWM before anything else to avoid the LED on full strength when uninitialized.*/
     float motorSpeed = 1;/**< variable to measure motor speed while returning to lower limit switch*/
     
@@ -1140,17 +1145,29 @@ int main(void)
 
     
     SDcardInit();
-    TWIMInit();
-    motorInit();  // Initialize Motor
+    //TWIMInit();
+    //motorInit();  // Initialize Motor TODO: commented out when testing icm module.
     
     missionInit();  // Initialize Mission
 
     fsm.state = INIT; // Initialize state machine
     
-    //calibratePressureSensor(); // remove to menue later...
+    //calibratePressureSensor(); // remove to menue later... DONE!
     
 
-    
+    twi_init();
+    init_imu();
+    TMP117_init();
+    while(1){
+
+       float temp = TMP117_read_temp();
+       //read_accel_data();
+
+       printf("Temperature: %.2f\n", temp);
+       nrf_delay_ms(2000);        
+    }
+
+
     char initHall = 0;
     bool hallCountStop = false;
     while (1) 

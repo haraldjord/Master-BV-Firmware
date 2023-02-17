@@ -79,11 +79,9 @@ Output/ble_app\ Debug/Obj/main.o: \
  ../SDK_dir/components/libraries/util/app_util.h \
  ../SDK_dir/components/libraries/util/sdk_macros.h \
  ../SDK_dir/components/libraries/block_dev/sdc/nrf_block_dev_sdc.h \
- ../SDK_dir/components/libraries/sdcard/app_sdcard.h Drivers/TWIM/TWIM.h \
- ../SDK_dir/modules/nrfx/drivers/include/nrfx_twim.h \
- ../SDK_dir/modules/nrfx/drivers/include/nrfx_twi_twim.h \
- ../SDK_dir/modules/nrfx/hal/nrf_twim.h Drivers/SAADC/SAADC.h \
- Drivers/Motor/motor.h Program/FSM/FSM.h Program/Timers/timers.h \
+ ../SDK_dir/components/libraries/sdcard/app_sdcard.h \
+ Drivers/SAADC/SAADC.h Drivers/Motor/motor.h Program/FSM/FSM.h \
+ Program/Timers/timers.h \
  ../SDK_dir/components/libraries/timer/app_timer.h \
  ../SDK_dir/components/libraries/log/nrf_log_instance.h \
  ../SDK_dir/components/libraries/experimental_section_vars/nrf_section.h \
@@ -91,7 +89,16 @@ Output/ble_app\ Debug/Obj/main.o: \
  ../SDK_dir/components/libraries/sortlist/nrf_sortlist.h \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_timer.h \
  ../SDK_dir/modules/nrfx/hal/nrf_timer.h Program/Mission/mission.h \
- Program/Menu/menu.h ../SDK_dir/components/softdevice/s132/headers/ble.h \
+ Program/Menu/menu.h Drivers/TWIM/TWIM_v2.h \
+ ../SDK_dir/integration/nrfx/legacy/nrf_drv_twi.h \
+ ../SDK_dir/modules/nrfx/drivers/include/nrfx_twim.h \
+ ../SDK_dir/modules/nrfx/drivers/include/nrfx_twi_twim.h \
+ ../SDK_dir/modules/nrfx/hal/nrf_twim.h \
+ ../SDK_dir/modules/nrfx/drivers/include/nrfx_twi.h \
+ ../SDK_dir/modules/nrfx/hal/nrf_twi.h \
+ C:\Users\haral\Desktop\Master\Master-BV-Firmware\i2c.h \
+ C:\Users\haral\Desktop\Master\Master-BV-Firmware\nrf_drv_twi.h \
+ Drivers/I2C/TMP117.h ../SDK_dir/components/softdevice/s132/headers/ble.h \
  ../SDK_dir/components/softdevice/s132/headers/ble_err.h \
  ../SDK_dir/components/softdevice/s132/headers/ble_gap.h \
  ../SDK_dir/components/softdevice/s132/headers/ble_hci.h \
@@ -146,9 +153,6 @@ Output/ble_app\ Debug/Obj/main.o: \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_gpiote.h \
  ../SDK_dir/modules/nrfx/hal/nrf_gpiote.h \
  ../SDK_dir/modules/nrfx/hal/nrf_gpio.h \
- ../SDK_dir/integration/nrfx/legacy/nrf_drv_twi.h \
- ../SDK_dir/modules/nrfx/drivers/include/nrfx_twi.h \
- ../SDK_dir/modules/nrfx/hal/nrf_twi.h \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_saadc.h \
  ../SDK_dir/modules/nrfx/hal/nrf_saadc.h \
  ../SDK_dir/components/libraries/uart/app_uart.h \

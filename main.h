@@ -4,6 +4,8 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
+
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -14,13 +16,19 @@
 #include "PID.h"
 #include "PWM.h"
 #include "SDcard.h"
-#include "TWIM.h"
+//#include "TWIM.h"
 #include "SAADC.h"
 #include "motor.h"
 #include "FSM.h"
 #include "timers.h"
 #include "mission.h"
 #include "menu.h"
+
+
+#include "TWIM_v2.h"
+//#include "ICM.h"
+#include "i2c.h"
+#include "TMP117.h"
 
 
 // SDK drivers
@@ -68,6 +76,11 @@
 #include "peer_manager_handler.h"
 #include "sensorsim.h"
 #include "sdk_macros.h"
+
+/*
+#include "SEGGER_RTT.c"
+#include "SEGGER_RTT_Syscalls_SES.c"
+*/
 
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
