@@ -33,6 +33,7 @@
       linker_section_placement_macros="FLASH_PH_START=0x0;FLASH_PH_SIZE=0x80000;RAM_PH_START=0x20000000;RAM_PH_SIZE=0x10000;FLASH_START=0x26000;FLASH_SIZE=0x5a000;RAM_START=0x200025B8;RAM_SIZE=0xDA48"
       linker_section_placements_segments="FLASH RX 0x0 0x80000;RAM RWX 0x20000000 0x10000"
       macros="CMSIS_CONFIG_TOOL=C:\\Users\\haral\\Desktop\\Master\\SDK_dir\\external_tools\\cmsisconfig\\CMSIS_Configuration_Wizard.jar"
+      project_dependencies=""
       project_directory=""
       project_type="Executable"
       speed="0"
@@ -107,6 +108,7 @@
       <file file_name="../SDK_dir/modules/nrfx/drivers/src/nrfx_uart.c" />
       <file file_name="../SDK_dir/modules/nrfx/drivers/src/nrfx_twi_twim.c" />
       <file file_name="../SDK_dir/modules/nrfx/drivers/src/nrfx_twim.c" />
+      <file file_name="nrf_drv_twi.c" />
     </folder>
     <folder Name="Application">
       <file file_name="main.c" />
@@ -120,6 +122,20 @@
         <file file_name="Drivers/TWIM/TWIM.c" />
         <file file_name="Drivers/Motor/motor.c" />
         <file file_name="Drivers/SAADC/modified_nrfx_saadc.c" />
+        <file file_name="i2c.c">
+          <configuration
+            Name="Common"
+            c_user_include_directories="/Drivers/I2C" />
+          <configuration
+            Name="Debug"
+            build_exclude_from_build="No"
+            c_user_include_directories="/Drivers/I2C;." />
+        </file>
+        <file file_name="i2c.h">
+          <configuration Name="Debug" build_exclude_from_build="No" />
+        </file>
+        <file file_name="Drivers/TWIM/TWIM_v2.c" />
+        <file file_name="Drivers/I2C/TMP117.c" />
       </folder>
       <folder Name="Program">
         <file file_name="Program/FSM/FSM.c" />
