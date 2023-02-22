@@ -143,6 +143,8 @@
         <file file_name="Program/Mission/mission.c" />
         <file file_name="Program/Timers/timers.c" />
         <file file_name="Program/PID/PID.c" />
+        <file file_name="Program/Globals/globals.c" />
+        <file file_name="Program/Mission/mockMission.c" />
       </folder>
     </folder>
     <folder Name="nRF_Segger_RTT">

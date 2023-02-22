@@ -6,12 +6,12 @@
 
 extern FSM_t fsm;
 extern mission_t mission;
-extern bool sampleSensorData;
-extern bool sampleIMUdata;
-extern bool readPressureSensor;
-extern bool updateFSM;
-extern bool missionLogUpdated;
-extern bool motorStopped;
+//extern bool sampleSensorData;
+//extern bool sampleIMUdata;
+//extern bool readPressureSensor;
+//extern bool updateFSM;
+//extern bool missionLogUpdated;
+//extern bool g_motorStopped;
 
 /** @file
  *
@@ -45,13 +45,13 @@ void SleepTimerHandler(void)
 /**@brief stop Motor timer handler.*/
 void stopMotorTimerHandler(void)
 {
-    motorStopped = false;
+    g_motorStopped = false;
 }
 
 /**@brief Update FSM timer handler.*/
 static void updateFSM_timer_handler(void * p_context)
 {
-  updateFSM = true;
+  g_updateFSM = true;
 }
 
 /**@brief Measure battery timer handler. */
@@ -63,13 +63,13 @@ static void repeatedBattery_timer_handler(void * p_context)
 /**@brief Sample SAADC timer handler.*/
 static void sampleSensorData_timer_handler(void * p_context)
 {
-  sampleSensorData = true;
-  readPressureSensor = true;
+  g_sampleSensorData = true;    // Used by mission.
+  g_readPressureSensor = true;  // Used by calibrating pressure sensor.
   //printf("Inside sampleSensorData handler\n\r");
 }
 
 static void sampleIMUdata_timer_handler(void * p_context){
-  sampleIMUdata = true;
+  g_sampleIMUdata = true;
   //printf("inside sampleIMUdata_timer_handler");
 }
 
@@ -77,7 +77,7 @@ static void sampleIMUdata_timer_handler(void * p_context){
 static void updateMissionLog_timer_handler(void * p_context)
 {
   updateMissionLog();
-  missionLogUpdated = true;
+  g_missionLogUpdated = true;
 }
 
 

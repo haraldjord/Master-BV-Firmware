@@ -10,15 +10,15 @@
  * @brief Contain mission module with related structures and functions.
  */
 
-extern bool motorStopped;         /**< Flag to signal motor stopped*/
-extern bool bottomLimit;          /**< Flag to signal when bottom limit switch is reached             */
-bool SAADCdataReady = false;      /**< Flag to signal SAADC data is ready to be read and calculated, and to run PID*/
-bool sampleSensorData = false;    /**< Flag to signal sampling battery, pressure, and TMP117*/
-bool sampleIMUdata = false;       /**< Flag to signal sampling data from IMU (icm chip)*/
-bool missionLogUpdated = false;   /**< Flag to signal mission log is updated*/
-bool TMP117dataReady = false;     /**< Flag to signal TMP117 data is ready to be read*/
-bool receiveTMP117 = false;       /**< Flag to signal that data is expected to be received from TMP117*/
-float EMA_state = 0.0;         //OBSOLETE   /**< global filter output variable */    
+//extern bool motorStopped;         /**< Flag to signal motor stopped*/
+//extern bool bottomLimit;          /**< Flag to signal when bottom limit switch is reached             */
+//bool SAADCdataReady = false;      /**< Flag to signal SAADC data is ready to be read and calculated, and to run PID*/
+//bool sampleSensorData = false;    /**< Flag to signal sampling battery, pressure, and TMP117*/
+//bool sampleIMUdata = false;       /**< Flag to signal sampling data from IMU (icm chip)*/
+//bool missionLogUpdated = false;   /**< Flag to signal mission log is updated*/
+//bool TMP117dataReady = false;     /**< Flag to signal TMP117 data is ready to be read*/
+//bool receiveTMP117 = false;       /**< Flag to signal that data is expected to be received from TMP117*/
+//float EMA_state = 0.0;         //OBSOLETE   /**< global filter output variable */    
 missionLog_t missionLog;          /**< Create mission log instance*/
 struct pid_controller ctrlData;   /**< Create PID controller control data instance*/
 pid_t pid;                        /**< Create PID controller instnace*/
@@ -84,7 +84,7 @@ void prepareMission(){
 
   enablePressureSensor();
 
-  EMA_state = SAADC_MIN;
+  //EMA_state = SAADC_MIN; // OBSOLETE...
 
   mission.nrOfMissions = 0;
   for(int i = 0; i < MAX_NR_OF_MISSIONS; i++){             // Check number of planned missions
@@ -98,8 +98,8 @@ void prepareMission(){
 
   stopBatteryMeasureTimer();
 
-  SAADCdataReady = false;
-  sampleSensorData = false;
+  g_SAADCdataReady = false;
+  g_sampleSensorData = false;
 }
 /**@snippet [Prepare mission]*/
 
@@ -123,21 +123,21 @@ void runMission(){
       startSampleSensorDatatimer();
       while(missionId == mission.missionFinished){
 
-          if(missionLogUpdated){
-            missionLogUpdated = false;
+          if(g_missionLogUpdated){
+            g_missionLogUpdated = false;
             writeMissionLog();
           }
 
-          if(sampleSensorData){
-            sampleSensorData = false;
+          if(g_sampleSensorData){
+            g_sampleSensorData = false;
             nrfx_saadc_sample();
             mission.MeasuredData.outside_temperature = TMP117_read_temp();
             read_accel_data();
             read_gyro_data();
            }
 
-           if(SAADCdataReady){
-              SAADCdataReady = false;
+           if(g_SAADCdataReady){
+              g_SAADCdataReady = false;
               CalcPressureAndDepth_v2();
               if( fabs(mission.currentMission.depth - mission.MeasuredData.filteredDepth) > mission.pidData.kiThreshold ) /**< If x meters away from target, run as PD regulator, otherwise run as PID regulator. This is so that it regulates quicker towards target */
                 pid_tune(pid, mission.pidData.kp, 0, mission.pidData.kd);
@@ -190,7 +190,7 @@ void runMission(){
   motorStop();
   motorDown(); /**< In case bottom limit switch is already triggered */
   nrf_delay_ms(1000);
-  bottomLimit = false;
+  g_bottomLimit = false;
   motorUp();             
   startMotorStopTimer();
   stopUpdateMissionLogTimer();

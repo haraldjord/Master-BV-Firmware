@@ -2,9 +2,9 @@
 
 extern enum menu currentMenu;
 enum config configVariable;
-extern bool getValue;
-extern bool transferDataFlag;
-extern bool sendNUS;
+//extern bool getValue;
+//extern bool transferDataFlag;
+//extern bool sendNUS;
 enum fileoption fileOption;
 
 extern missionLog_t missionLog;
@@ -25,7 +25,7 @@ void setConfigValue(char * value)
 
   float floatValue;
   int   intValue;
-  getValue = false;
+  g_getValue = false;
   
   switch(configVariable){
     case M1DEPTH:
@@ -33,77 +33,77 @@ void setConfigValue(char * value)
       if(floatValue > MAX_DEPTH) floatValue = MAX_DEPTH;
       else if(floatValue < MIN_DEPTH) floatValue = MIN_DEPTH;
       mission.missionNr[0].depth = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M1TIME:
       intValue = atoi(value);
       mission.missionNr[0].time = intValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M2DEPTH:
       floatValue = atof(value);
       if(floatValue > MAX_DEPTH) floatValue = MAX_DEPTH;
       else if(floatValue < MIN_DEPTH) floatValue = MIN_DEPTH;
       mission.missionNr[1].depth = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M2TIME:
       intValue = atoi(value);
       mission.missionNr[1].time = intValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M3DEPTH:
       floatValue = atof(value);
       if(floatValue > MAX_DEPTH) floatValue = MAX_DEPTH;
       else if(floatValue < MIN_DEPTH) floatValue = MIN_DEPTH;
       mission.missionNr[2].depth = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M3TIME:
       intValue = atoi(value);
       mission.missionNr[2].time = intValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M4DEPTH:
       floatValue = atof(value);
       if(floatValue > MAX_DEPTH) floatValue = MAX_DEPTH;
       else if(floatValue < MIN_DEPTH) floatValue = MIN_DEPTH;
       mission.missionNr[3].depth = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case M4TIME:
       intValue = atoi(value);
       mission.missionNr[3].time = intValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
 
 
     case PID_P:
       floatValue = atof(value);
       mission.pidData.kp = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case PID_I:
       floatValue = atof(value);
       mission.pidData.ki = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     case PID_D:
       floatValue = atof(value);
       mission.pidData.kd = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
 
     case THRESHOLD:
       floatValue = atof(value);
       mission.pidData.kiThreshold = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
      break;
    
     case ATM_PRESSURE:
       floatValue = atof(value);
       mission.pidData.atmosphericPressure = floatValue;
-      sendNUS = true;
+      g_sendNUS = true;
       break;
     
     /*
@@ -127,19 +127,19 @@ void mainMenu(int option)
     case 1:
       NRF_LOG_INFO("Option 1\n");
       currentMenu = MISSIONDATA;
-      sendNUS = true;
+      g_sendNUS = true;
      break;
 
     case 2:
         NRF_LOG_INFO("Option 2\n"); 
         currentMenu = CONFIGVEHICLE;
-        sendNUS = true;
+        g_sendNUS = true;
         break;
 
     case 3: 
         NRF_LOG_INFO("Option 3\n");
         currentMenu = TRANSFERDATA;
-        sendNUS = true;
+        g_sendNUS = true;
         break;
 
     case 4:
@@ -165,7 +165,7 @@ void mainMenu(int option)
     case 9:
         NRF_LOG_INFO("Option 9\n");
         currentMenu = MAINMENU;
-        sendNUS = true;
+        g_sendNUS = true;
         break;
 
     default:
@@ -190,7 +190,7 @@ void missinDataMenu(int option)
       uint8_t mission1Depth[] = "Type in Mission1 Depth - x.xx (float) - :";
       msgLength = sizeof(mission1Depth);
       nus_send(mission1Depth,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M1DEPTH;
      break;
 
@@ -199,7 +199,7 @@ void missinDataMenu(int option)
       uint8_t mission1Time[] = "Type in Mission1 Time - xx (integer) - :";
       msgLength = sizeof(mission1Time);
       nus_send(mission1Time, msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M1TIME;
      break;
         
@@ -209,7 +209,7 @@ void missinDataMenu(int option)
       uint8_t mission2Depth[] = "Type in Mission2 depth - x.xx (float) - :";
       msgLength = sizeof(mission2Depth);
       nus_send(mission2Depth, msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M2DEPTH;
      break;
 
@@ -218,7 +218,7 @@ void missinDataMenu(int option)
       uint8_t mission2Time[] = "Type in Mission2 Time - xx (integer) - :";
       msgLength = sizeof(mission2Time);
       nus_send(mission2Time,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M2TIME;
      break;
 
@@ -227,7 +227,7 @@ void missinDataMenu(int option)
       uint8_t mission3Depth[] = "Type in Mission3 depth - x.xx (float) - :";
       msgLength = sizeof(mission3Depth);
       nus_send(mission3Depth,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M3DEPTH;
      break;
 
@@ -236,7 +236,7 @@ void missinDataMenu(int option)
       uint8_t mission3Time[] = "Type in Mission3 Time - xx (integer) - :";
       msgLength = sizeof(mission3Time);
       nus_send(mission3Time,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M3TIME;
      break;
 
@@ -244,7 +244,7 @@ void missinDataMenu(int option)
       uint8_t mission4Depth[] = "Type in Mission4 depth - x.xx (float) - :";
       msgLength = sizeof(mission4Depth);
       nus_send(mission4Depth,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M4DEPTH;
      break;
 
@@ -252,13 +252,13 @@ void missinDataMenu(int option)
       uint8_t mission4Time[] = "Type in Mission4 Time - xx (integer) - :";
       msgLength = sizeof(mission4Time);
       nus_send(mission4Time,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = M4TIME;
      break;
     
    case 9: NRF_LOG_INFO("Option 9\n");
       currentMenu = MAINMENU;
-      sendNUS = true;
+      g_sendNUS = true;
      break;
 
     default:
@@ -282,7 +282,7 @@ void configVehicleMenu(int option)
       uint8_t p_msg[] = "Type in P value - x.xxx (float) - :";
       msgLength = sizeof(p_msg);
       nus_send(p_msg,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = PID_P;
      break;
 
@@ -291,7 +291,7 @@ void configVehicleMenu(int option)
       uint8_t i_msg[] = "Type in I value - x.xxx (float) - :";
       msgLength = sizeof(i_msg);
       nus_send(i_msg,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = PID_I;
      break;
 
@@ -300,7 +300,7 @@ void configVehicleMenu(int option)
       uint8_t d_msg[] = "Type in D value - x.xxx (float) - :";
       msgLength = sizeof(d_msg);
       nus_send(d_msg,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = PID_D;
      break;
 
@@ -309,7 +309,7 @@ void configVehicleMenu(int option)
       uint8_t threshold_msg[] = "Type in Ki Threshold value (m) - x.x (float) - :";
       msgLength = sizeof(threshold_msg);
       nus_send(threshold_msg,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = THRESHOLD;
      break;
 
@@ -318,7 +318,7 @@ void configVehicleMenu(int option)
       uint8_t atmosphericPressure_msg[] = "Type in current atmospheric pressure (psi) - x.x (float) - :";
       msgLength = sizeof(atmosphericPressure_msg);
       nus_send(atmosphericPressure_msg,msgLength);
-      getValue = true;
+      g_getValue = true;
       configVariable = ATM_PRESSURE;
      break;
   
@@ -335,7 +335,7 @@ void configVehicleMenu(int option)
     case 9:
       NRF_LOG_INFO("Option 9\n");
       currentMenu = MAINMENU;
-      sendNUS = true;
+      g_sendNUS = true;
      break;
 
     default:
@@ -358,7 +358,7 @@ void transferDataMenu(int option)
       NRF_LOG_INFO("Option 1\n");
       uint8_t file1_msg[] = "Confirm transfer all files: 1 (yes), 0 (No)";
       nus_send(file1_msg, sizeof(file1_msg));
-      transferDataFlag = true;
+      g_transferDataFlag = true;
       fileOption = TRANSFER_ALL;
      break;
 
@@ -366,7 +366,7 @@ void transferDataMenu(int option)
        NRF_LOG_INFO("Option 2\n"); 
        uint8_t file2_msg[] = "Transfer one file by numbers 1 to xx. 0 to cancel: ";
        nus_send(file2_msg,sizeof(file2_msg));
-       transferDataFlag = true;
+       g_transferDataFlag = true;
        fileOption = TRANSFER_ONE;
       break;
 
@@ -374,14 +374,14 @@ void transferDataMenu(int option)
        NRF_LOG_INFO("Option 3\n");
        uint8_t file3_msg[] = "Confirm DELETE all files: 1 (yes), 0 (No)";
        nus_send(file3_msg,sizeof(file3_msg));
-       transferDataFlag = true;
+       g_transferDataFlag = true;
        fileOption = DELETE_ALL;
       break;
     case 4:
        NRF_LOG_INFO("Option 4\n"); 
        uint8_t file4_msg[] = "Delete one file by numbers 1 to xx. 0 to cancel: ";
        nus_send(file4_msg,sizeof(file4_msg));
-       transferDataFlag = true;
+       g_transferDataFlag = true;
        fileOption = DELETE_ONE;
       break;
 
@@ -389,13 +389,13 @@ void transferDataMenu(int option)
     case 9:
         NRF_LOG_INFO("Option 9\n");
         currentMenu = MAINMENU;
-        sendNUS = true;
+        g_sendNUS = true;
         break;
 
     default:
        NRF_LOG_INFO("Unknown option: %d\n", option);
     }
-NRF_LOG_ERROR("CurrentMenu: %d, sendNUS: %d\n", currentMenu, sendNUS);
+NRF_LOG_ERROR("CurrentMenu: %d, g_sendNUS: %d\n", currentMenu, g_sendNUS);
 }
 /**@snippet [navigate Transfer Data menu]*/
 
@@ -404,7 +404,7 @@ NRF_LOG_ERROR("CurrentMenu: %d, sendNUS: %d\n", currentMenu, sendNUS);
 void transferData(char * fileCmd){
   int Cmd = 0;
 
-  transferDataFlag = false;
+  g_transferDataFlag = false;
   
 
   Cmd = atoi(fileCmd);
@@ -437,7 +437,7 @@ void transferData(char * fileCmd){
       default: NRF_LOG_INFO("TransferData, unknown option: %d",Cmd);
     }
   }
-  sendNUS = true;
+  g_sendNUS = true;
 }
 /**@snippet [handle file operation menu]*/
 
@@ -610,9 +610,9 @@ void transferAllFiles(){
     nus_send(data_array, (uint16_t)length);
 
 
-    transferDataFlag = false;
+    g_transferDataFlag = false;
     currentMenu = MAINMENU;
-    sendNUS = true;
+    g_sendNUS = true;
 }
 /**@snippet [Transfer all mission log files from SD card over BLE to client]*/
 
@@ -665,9 +665,9 @@ void TransferOneFile(void){
     len = sprintf(data_array, "Filename: %s, Size: %d bytes, TransferTime: %.2f sec, bytes per Second: %.2f B/sec",filename, fileSize, transferTime, bytePerSec);
     nus_send(data_array, len);
     
-    transferDataFlag = false;
+    g_transferDataFlag = false;
     currentMenu = MAINMENU;
-    sendNUS = true;
+    g_sendNUS = true;
 }
 /**@snippet [Transfer one mission log files from SD card over BLE to client]*/
 
@@ -687,9 +687,9 @@ void deleteFile(void){
 
     nus_send(returnMsg,returnMsgLength);
     
-    transferDataFlag = false;
+    g_transferDataFlag = false;
     currentMenu = MAINMENU;
-    sendNUS = true;
+    g_sendNUS = true;
 }
 /**@snippet [delete one mission log files from SD card]*/
 
@@ -708,9 +708,9 @@ void deleteAllFiles(void){
     NRF_LOG_ERROR("returnMsg: %s, returnMsgLength: %d",returnMsg, returnMsgLength);
     nus_send(returnMsg,returnMsgLength);
     
-    transferDataFlag = false;
+    g_transferDataFlag = false;
     currentMenu = MAINMENU;
-    sendNUS = true;
+    g_sendNUS = true;
 }
 /**@snippet [delete all mission log files from SD card]*/
 

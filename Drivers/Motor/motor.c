@@ -2,8 +2,8 @@
 #include "motor.h"
 #include "app_uart.h"
 
-extern bool bottomLimit;
-extern bool motorStopped;
+//extern bool bottomLimit;
+//extern bool motorStopped;
 
 /** @file
  *
@@ -256,17 +256,17 @@ rxMotor.msgReceived = false;
 
  void stopMotorAtSurface(){  
 
-    while(!bottomLimit);
-    bottomLimit = false;
+    while(!g_bottomLimit);
+    g_bottomLimit = false;
     motorStop();
-    motorStopped = true;
+    g_motorStopped = true;
 }
 /**@snippet [Stop motor at surface]*/
 
  void setSurfaceReferencePoint(){ 
     motorDown(); /**< To clear limit switch before re-trigger */
     nrf_delay_ms(1000);
-    bottomLimit = false;
+    g_bottomLimit = false;
     motorUp();
     stopMotorAtSurface();
     setReferencePositionToZero();

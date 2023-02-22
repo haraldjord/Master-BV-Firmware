@@ -43,7 +43,7 @@ void TMP117_init(void){
 
 float TMP117_read_temp(){
   
-  uint16_t getValue = TMP117_read(TMP117_TEMP_RESULT); // Read temperature register 
+  uint16_t getValue = TMP117_read(TMP117_TEMP_RESULT); // Read temperature register //TODO change name
   float temp = getValue;                               //change data type to float
   temp = temp / TMP117Resolution;                      // Divide by resolution 
   return temp;

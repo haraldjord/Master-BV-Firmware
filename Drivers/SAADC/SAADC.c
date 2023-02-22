@@ -34,7 +34,7 @@ nrfx_saadc_event_handler_t saadc_handler(nrfx_saadc_evt_t const * p_event)
           
           //printf("Raw pressure voltage: %f\n\r", mission.MeasuredData.pressure);
           if (mission.MeasuredData.battery > 0)
-            SAADCdataReady = true;
+            g_SAADCdataReady = true;
         }
 
       else if(p_event->type == NRFX_SAADC_EVT_LIMIT){
