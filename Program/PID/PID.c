@@ -49,7 +49,7 @@ pid_t pid_create(pid_t pid, float* in, float* out, float* set, float kp, float k
 	return pid;
 }
 
-bool pid_need_compute(pid_t pid)
+bool pid_need_compute(pid_t pid) // NOT BEEING USED!
 {
         // Check if the PID period has elapsed
 	return(app_timer_cnt_get() - pid->lasttime >= pid->sampletime) ? true : false;
@@ -62,7 +62,7 @@ void pid_compute(pid_t pid)
 	if (!pid->automode)
 		return false;
 
-        float in = mission.MeasuredData.measuredDepth;
+        float in = mission.MeasuredData.filteredDepth;
 
 	// Compute error
 	float error = (*(pid->setpoint)) - in;
@@ -88,6 +88,11 @@ void pid_compute(pid_t pid)
 
 	//*pid->output = out;
         mission.pidData.output = out;
+
+        // Keep track of PID contributions.
+        mission.pidDataOut.kp = pid->Kp*error;
+        mission.pidDataOut.ki = pid->iterm;
+        mission.pidDataOut.kd = pid->Kd*dinput;
           
 	// Keep track of some variables for next execution
 	pid->lastin = in;

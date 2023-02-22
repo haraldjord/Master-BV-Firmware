@@ -31,67 +31,28 @@ void init_imu(){
   set_userbank(2);
 
   set_gyro_sample_rate(100);
-  set_gyro_lowpass(true, 5, 250); // enable low pass in mode 5, with scale range to +- 250
+  set_gyro_lowpass(true, 5, 250);         // enable low pass in mode 5, with scale range to +- 250
 
   set_accelerometer_sample_rate(100);
   set_accelerometer_lowpass(true,5,16);    //enable low pass filter in mode 5, with scale to 16g
   
   set_userbank(0);
-  // TODO something with INT pin...
-  icm_write(0x0f, 0x30);
+  // Configure int pin
+  icm_write(0x0f, 0b10111000); //active low, clear on read
+  icm_write(0x11, 0x01); // Raw data ready interrupt.
+  uint8_t test = icm_read(0x11);
+
+
   set_userbank(3);
   icm_write(0x01, 0x4d);
   icm_write(0x02, 0x01);
 }
 
-/*void set_userbank(uint8_t bank){
-  ret_code_t err_code;
-  bank = (bank<<4);
-
-  uint8_t REG_BANK_SEL = 0x7f; // User bank register
-  uint8_t reg[2] = {REG_BANK_SEL, bank};
-  m_xfer_done = false;
-  err_code = nrf_drv_twi_tx(&m_twi, ICM_MOTION, reg, sizeof(reg), true);
-  APP_ERROR_CHECK(err_code);
-  while(m_xfer_done == false);
-  nrf_delay_ms(50);
-}
-
-void icm_write(uint8_t reg, uint8_t data){
-  ret_code_t err_code;
-  uint8_t write[2] = {reg, data}; // bytes to be written on i2c bus
-  m_xfer_done = false;
-  err_code = nrf_drv_twi_tx(&m_twi, ICM_MOTION, write, sizeof(write), true);
-  APP_ERROR_CHECK(err_code);
-  while(m_xfer_done == false);
-  nrf_delay_us(1);
-}
-
-uint8_t icm_read(uint8_t reg){
-  ret_code_t err_code;
-  uint8_t data;
-  uint8_t send[2];
-  send[0] = reg;
-  m_xfer_done = false;
-  err_code = nrf_drv_twi_tx(&m_twi, ICM_MOTION, send, 1, false);
-  APP_ERROR_CHECK(err_code);
-  while(m_xfer_done == false);
-  nrf_delay_us(1);
-
-  // Read 1 byte from the specified address 
-  m_xfer_done = false;
-  err_code = nrf_drv_twi_rx(&m_twi, ICM_MOTION, &data, sizeof(data));
-  APP_ERROR_CHECK(err_code);
-  while(m_xfer_done == false);
-  nrf_delay_us(1);
-
-  return data;
-}*/
 
 void set_gyro_sample_rate(uint8_t HzRate){
   // Set gyro sample rate in Hz.
 
-  uint8_t calcRate = (1125.0/HzRate)-1 ;
+  uint8_t calcRate = (1100.0/HzRate)-1 ;
   icm_write(0x00, calcRate);
 
 }
@@ -171,22 +132,21 @@ void read_accel_data(void){
   set_userbank(2);
   uint8_t scaleFactor = icm_read(0x14);
   scaleFactor = (scaleFactor & 0x06) >> 1;
-  float sf;
   switch (scaleFactor){
     case 0:
-      sf = 16384;
+      icm.accel.sensitivity = 16384;
       break;
     case 1:
-      sf = 8192;
+      icm.accel.sensitivity = 8192;
       break;
     case 2:
-      sf = 4096;
+      icm.accel.sensitivity = 4096;
       break;
     case 3:
-      sf = 2048;
+      icm.accel.sensitivity = 2048;
       break;
       default:
-      sf = 1;
+      icm.accel.sensitivity = 1;
       NRF_LOG_ERROR("Invalid scale factor for accelerometer.");   
   }
 
@@ -195,55 +155,84 @@ void read_accel_data(void){
   uint8_t xMSB = icm_read(0x2d);
   uint8_t xLSB = icm_read(0x2e);
   int16_t tempX = ((xMSB<<8) | xLSB); // save register values as temporarly signed integer with 16 bit.
-  icm.accel.x = tempX/sf;
+  icm.accel.x = tempX;
   
   // Read y direction
   uint8_t yMSB = icm_read(0x2f);
   uint8_t yLSB = icm_read(0x30);
   int16_t tempY = (yMSB<<8 | yLSB);
-  icm.accel.y = tempY/sf;
+  icm.accel.y = tempY;
+  
   
   // Read z direction
   uint8_t zMSB = icm_read(0x31);
   uint8_t zLSB = icm_read(0x32);
   int16_t tempZ = (zMSB<<8 | zLSB);
-  icm.accel.z = tempZ/sf;
+  icm.accel.z = tempZ;
 
-  printf("accelerometer: %.2f %.2f %.2f\n", icm.accel.x, icm.accel.y, icm.accel.z);
+  printf("accelerometer: %.2f %.2f %.2f\n", (float)icm.accel.x/icm.accel.sensitivity, (float)icm.accel.y/icm.accel.sensitivity, (float)icm.accel.z/icm.accel.sensitivity);
   //printf("MSB: %x %x %x\n", accelerometerData.xMSB, accelerometerData.yMSB, accelerometerData.zMSB);
 }
 
-
-/* TODO DELETE obsolete
-void self_test(){
+void read_gyro_data(){
+  // Identify scale factor:
   set_userbank(2);
-  // Enable self test and average 8 samples.
-  IMU_write(0x15, 0x1f);
+  uint8_t scaleFactor = icm_read(0x01);
+  scaleFactor = (scaleFactor & 0x06) >> 1;
+  switch (scaleFactor){
+    case 0:
+      icm.gyro.sensitivity = 131;
+      break;
+    case 1:
+      icm.gyro.sensitivity = 65.5;
+      break;
+    case 2:
+      icm.gyro.sensitivity = 32.8;
+      break;
+    case 3:
+      icm.gyro.sensitivity = 16.4;
+      break;
+      default:
+      icm.gyro.sensitivity = 1;
+      NRF_LOG_ERROR("Invalid scale factor for accelerometer.");
+      }
 
-
-  set_userbank(1);
-  // Declear some variables
-  uint8_t x;
-  uint8_t y;
-  uint8_t z;
-  printf("--------------------------");
-  printf("Self Test:");
-
-
+ set_userbank(0);
   // Read x direction
-  icm_read(0x15, &x);
-  //xData = xx/sf;
-  printf("x_axis accelerometer: %d\t", x);
-
-    // read y direction
-  icm_read(0x16, &y);
-  //yData = yData/sf;
-  printf("y_axis accelerometer: %d\t", y);
-
+  uint8_t xMSB = icm_read(0x33);
+  uint8_t xLSB = icm_read(0x34);
+  int16_t tempX = ((xMSB<<8) | xLSB); // save register values as temporarly signed integer with 16 bit.
+  icm.gyro.x = tempX;
+  
+  // Read y direction
+  uint8_t yMSB = icm_read(0x35);
+  uint8_t yLSB = icm_read(0x36);
+  int16_t tempY = (yMSB<<8 | yLSB);
+  icm.gyro.y = tempY;
+  
+  
   // Read z direction
-  icm_read(0x17, &z);  
-  //zData = zData/sf;
-  printf("z_axis accelerometer: %d\t", z);
-  printf("\n----------------\n");
+  uint8_t zMSB = icm_read(0x37);
+  uint8_t zLSB = icm_read(0x38);
+  int16_t tempZ = (zMSB<<8 | zLSB);
+  icm.gyro.z = tempZ;
 
-}*/
+  printf("gyroscope: %.2f %.2f %.2f\n", ((float)icm.gyro.x)/icm.gyro.sensitivity, ((float)icm.gyro.y)/icm.gyro.sensitivity, ((float)icm.gyro.z)/icm.gyro.sensitivity);
+}
+
+void read_magnetometer_data(){
+ //TODO configure magnetometer:
+}
+
+void trigger_mag_io(void){
+    //set_userbank(0);
+    uint8_t user = icm_read(0x03);
+    icm_write(0x03, (user | 0x20));
+    nrf_delay_ms(1);
+    icm_write(0x03, user);
+}
+
+
+
+
+

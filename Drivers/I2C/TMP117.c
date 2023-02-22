@@ -23,14 +23,11 @@ void TMP117_init(void){
     NRF_LOG_ERROR("TMP117 module not found on I2C bus!");
     
   // soft reset:
-
   TMP117_write(TMP117_CONFIGURATION, 0x02);
-  nrf_delay_ms(25); // Reset duration of 2ms. According to datasheet. 
-
-  uint16_t test = TMP117_read(TMP117_T_HIGH_LIMIT);
+  nrf_delay_ms(25); // Reset duration of minimum 2ms. According to datasheet. 
 
   //uint16_t config = TMP117_read(TMP117_CONFIGURATION);
-  uint16_t config = 0b000010100000| 0x0000;  // Interupt alert, average 8 measurements, continous conversion mode, see configuration register in datasheet.
+  uint16_t config = 0b000010100000| 0x0000;  // Interrupt alert, average 8 measurements, continous conversion mode, see configuration register in datasheet.
   TMP117_write(TMP117_CONFIGURATION, config);
 
   // Set temp limit for interrupt alert:
@@ -39,6 +36,8 @@ void TMP117_init(void){
   TMP117_write(TMP117_T_HIGH_LIMIT, upper_limit);
   TMP117_write(TMP117_T_LOW_LIMIT, lower_limit);
 
+  uint16_t test = TMP117_read(TMP117_T_HIGH_LIMIT);
+
 }
 
 
@@ -46,7 +45,7 @@ float TMP117_read_temp(){
   
   uint16_t getValue = TMP117_read(TMP117_TEMP_RESULT); // Read temperature register 
   float temp = getValue;                               //change data type to float
-  temp = temp / TMP117Resolution;                                   // Divide by resolution 
+  temp = temp / TMP117Resolution;                      // Divide by resolution 
   return temp;
 }
 

@@ -74,8 +74,7 @@ bool motorStopped = false;      /**< Flag to signal if motor is stopped or need 
 bool isAdvertising = false;     /**< Flag to signal if advertising or not                           */
 bool bottomLimit = false;       /**< Flag to signal when bottom limit switch is reached             */
 bool readPressureSensor = false;
-bool TMP117Ready = false;       /**< Flag to signal data from TMP117 is ready */
-//float pressureOffset = 0;
+
 
 mission_t mission;              /**< Create mission struct instance */
 FSM_t fsm;                      /**< Create Finite State Machine struct instance*/
@@ -123,8 +122,7 @@ void limitSwitchTop_handler(void){
 void TMP_temp_Alert_Interrupt_handler(void){
 
   NRF_LOG_INFO("TMP117_ALERT_Interrupt_HANDLER");
-
-  TMP117Ready = true;
+  
 }
 
 /**@brief ICM20948 Motion Sensor Interrupt handler.
@@ -135,7 +133,7 @@ void TMP_temp_Alert_Interrupt_handler(void){
 void motionSensorInterrupt_handler(void){
 
   NRF_LOG_INFO("MotionSensor_Interrupt_HANDLER");
-  printf("MotionSensor_Interrupt_HANDLER");
+
 
 }
 
@@ -843,7 +841,8 @@ static void gpio_init(void)
     APP_ERROR_CHECK(err_code);
 
     // Enable interrupt to call event handler
-    nrfx_gpiote_in_event_disable(MOTION_INT);
+    //nrfx_gpiote_in_event_disable(MOTION_INT);
+    nrfx_gpiote_in_event_enable(MOTION_INT, true);
     nrfx_gpiote_in_event_enable(HALLEFFECT_INT,true);
     nrfx_gpiote_in_event_enable(TMP_ALERT, true);
     nrfx_gpiote_in_event_enable(BOTTOM_LIMIT,true);
@@ -1142,8 +1141,6 @@ int main(void){
     saadc_init();
     motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to make sure they are enabled when motor is running*/
 
-
-    
     SDcardInit();
     //TWIMInit();
     //motorInit();  // Initialize Motor TODO: commented out when testing icm module.
@@ -1151,35 +1148,28 @@ int main(void){
     missionInit();  // Initialize Mission
 
     fsm.state = INIT; // Initialize state machine
-    
-    //calibratePressureSensor(); // remove to menue later... DONE!
-    
 
     twi_init();
     init_imu();
     TMP117_init();
-    while(1){
 
-       float temp = TMP117_read_temp();
-       //read_accel_data();
+    // test RTC
+    uint32_t timeStamp_ms = 0;
+    int timeStamp = 0, oldTimestamp = 0, elapsedTime = 0;
+    startUpdateMissionLogTimer();
+    updateMissiontimer(10);
+    startMissiontimer();
+    oldTimestamp = app_timer_cnt_get();
+    startSampleIMUdataTimer(); // sampleIMUdata every 2 sec
+    extern bool sampleIMUdata;
+    while(1){ // test mock mission
 
-       printf("Temperature: %.2f\n", temp);
-       nrf_delay_ms(2000);        
+        
+
+
     }
-
-
-    char initHall = 0;
-    bool hallCountStop = false;
     while (1) 
     {
-     
-      if (initHall == 10){
-        fsm.hallEffectButton = true;
-        hallCountStop = true;
-        initHall = 100;
-        } // workaround to enter BLE state when hall effekt button doesn't work properly
-      if (!hallCountStop)
-        initHall ++;
 
      if(updateFSM){
       updateFSM = false;

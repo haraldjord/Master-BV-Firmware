@@ -89,15 +89,15 @@ Output/ble_app\ Debug/Obj/FSM.o: \
  ../SDK_dir/components/libraries/log/nrf_log_types.h \
  ../SDK_dir/components/libraries/sortlist/nrf_sortlist.h \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_timer.h \
- ../SDK_dir/modules/nrfx/hal/nrf_timer.h Program/Mission/mission.h \
- Program/Menu/menu.h Drivers/TWIM/TWIM_v2.h \
- ../SDK_dir/integration/nrfx/legacy/nrf_drv_twi.h \
+ ../SDK_dir/modules/nrfx/hal/nrf_timer.h Program/Menu/menu.h \
+ Drivers/TWIM/TWIM_v2.h ../SDK_dir/integration/nrfx/legacy/nrf_drv_twi.h \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_twim.h \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_twi_twim.h \
  ../SDK_dir/modules/nrfx/hal/nrf_twim.h \
  ../SDK_dir/modules/nrfx/drivers/include/nrfx_twi.h \
  ../SDK_dir/modules/nrfx/hal/nrf_twi.h i2c.h nrf_drv_twi.h main.h \
- Drivers/I2C/TMP117.h ../SDK_dir/components/softdevice/s132/headers/ble.h \
+ Program/Mission/mission.h i2c.h Drivers/I2C/TMP117.h mockpid.h \
+ ../SDK_dir/components/softdevice/s132/headers/ble.h \
  ../SDK_dir/components/softdevice/s132/headers/ble_err.h \
  ../SDK_dir/components/softdevice/s132/headers/ble_gap.h \
  ../SDK_dir/components/softdevice/s132/headers/ble_hci.h \

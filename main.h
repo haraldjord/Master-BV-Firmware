@@ -21,7 +21,7 @@
 #include "motor.h"
 #include "FSM.h"
 #include "timers.h"
-#include "mission.h"
+
 #include "menu.h"
 
 
@@ -29,7 +29,8 @@
 //#include "ICM.h"
 #include "i2c.h"
 #include "TMP117.h"
-
+#include "mission.h"
+#include "mockpid.h"
 
 // SDK drivers
 #include "nordic_common.h"

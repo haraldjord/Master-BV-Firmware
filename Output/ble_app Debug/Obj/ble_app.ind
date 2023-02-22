@@ -75,6 +75,7 @@
 "Output/ble_app Debug/Obj/mission.o"
 "Output/ble_app Debug/Obj/timers.o"
 "Output/ble_app Debug/Obj/PID.o"
+"Output/ble_app Debug/Obj/mockpid.o"
 "Output/ble_app Debug/Obj/SEGGER_RTT.o"
 "Output/ble_app Debug/Obj/SEGGER_RTT_Syscalls_SES.o"
 "Output/ble_app Debug/Obj/SEGGER_RTT_printf.o"

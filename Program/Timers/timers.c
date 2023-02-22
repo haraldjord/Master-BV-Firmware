@@ -7,6 +7,7 @@
 extern FSM_t fsm;
 extern mission_t mission;
 extern bool sampleSensorData;
+extern bool sampleIMUdata;
 extern bool readPressureSensor;
 extern bool updateFSM;
 extern bool missionLogUpdated;
@@ -31,6 +32,7 @@ static const nrfx_timer_t m_missionTimer = NRFX_TIMER_INSTANCE(1);
 nrfx_timer_event_handler_t missionTimerHandler(nrf_timer_event_t event_type, void * p_context)
 {
     mission.missionFinished++;
+    printf("missionTimerHandler\n");
 }
 
 
@@ -64,6 +66,11 @@ static void sampleSensorData_timer_handler(void * p_context)
   sampleSensorData = true;
   readPressureSensor = true;
   //printf("Inside sampleSensorData handler\n\r");
+}
+
+static void sampleIMUdata_timer_handler(void * p_context){
+  sampleIMUdata = true;
+  //printf("inside sampleIMUdata_timer_handler");
 }
 
 /**@brief Update mission log timer handler.*/
@@ -134,6 +141,12 @@ void timers_init(void)
                                 APP_TIMER_MODE_REPEATED,
                                 sampleSensorData_timer_handler);
     APP_ERROR_CHECK(err_code);
+
+    // sample IMU data timer
+    err_code = app_timer_create(&m_sampleIMUdata_timer_id,
+                                APP_TIMER_MODE_REPEATED,
+                                sampleIMUdata_timer_handler);
+    APP_ERROR_CHECK(err_code);
     
     // Update missionLog timer
     err_code = app_timer_create(&m_updateMissionLog_timer_id,
@@ -173,6 +186,15 @@ void stopSampleSensorDatatimer(){
 }
 /**@snippet [stop timer for SensorData sampling]*/
 
+void startSampleIMUdataTimer(){
+  ret_code_t err_code = app_timer_start(m_sampleIMUdata_timer_id, ICM_SAMPLE_TIMER, NULL);
+  APP_ERROR_CHECK(err_code);
+}
+
+void stopSampleIMUdataTimer(){
+  ret_code_t err_code = app_timer_stop(m_sampleIMUdata_timer_id);
+  APP_ERROR_CHECK(err_code);
+}
 
 
 void startSleepTimer(){
