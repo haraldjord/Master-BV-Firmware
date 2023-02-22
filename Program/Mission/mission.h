@@ -50,7 +50,14 @@
 #define EMA_alpha 0.1               /**< Exponential Moving Average 'alpha' Coefficient*/
 
 
-
+//extern bool motorStopped;         /**< Flag to signal motor stopped*/
+//extern bool bottomLimit;          /**< Flag to signal when bottom limit switch is reached             */
+//extern bool SAADCdataReady = false;      /**< Flag to signal SAADC data is ready to be read and calculated, and to run PID*/
+//extern bool sampleSensorData = false;    /**< Flag to signal sampling battery, pressure, and TMP117*/
+//extern bool sampleIMUdata = false;       /**< Flag to signal sampling data from IMU (icm chip)*/
+//extern bool missionLogUpdated = false;   /**< Flag to signal mission log is updated*/
+//bool TMP117dataReady = false;     /**< Flag to signal TMP117 data is ready to be read*/
+//bool receiveTMP117 = false;       /**< Flag to signal that data is expected to be received from TMP117*/
 
 
 
