@@ -16,17 +16,19 @@
 
 #define IDLE_TO_SLEEP_TIME APP_TIMER_TICKS(2000*60)        /**< 2 min in idle before going to sleep.*/
 #define MOTOR_STOP_TIME APP_TIMER_TICKS(5000)              /**< Wait 5 seconds before the program check if motor need to be stopped.*/
-#define UPDATE_MISSIONLOG_TIMER APP_TIMER_TICKS(1000)       /**< Update mission log every 0.5 sec */
+#define UPDATE_MISSIONLOG_TIMER APP_TIMER_TICKS(500)       /**< Update mission log every 0.5 sec */
 #define MEASURE_BATTERY_TIMER APP_TIMER_TICKS(10000)       /**< Measure battery voltage everey 10 sec when not in mission state */
 #define SENSORS_SAMPLE_TIMER APP_TIMER_TICKS(500)          /**< Set time between each SAADC and TMP117 sample.*/
-#define UPDATE_FSM_TIMER APP_TIMER_TICKS(500)              /**< When not in mission state update FSM within i strict interval. */
+#define ICM_SAMPLE_TIMER APP_TIMER_TICKS(1000)              /**< set timer between reading of IMU to 0.1 sec, result in 5 measurements before log is updated */
+#define UPDATE_FSM_TIMER APP_TIMER_TICKS(500)              /**< When not in mission state update FSM within i strict interval. Not in use yet */
 #define KHZ_TO_SEC 125000                                  /**< Convert kHz to seconds to set mission timer*/
 
 APP_TIMER_DEF(m_updateFSM_timer_id);              /**< Create a variable to hold the repeated timer m_updateFSM_timer_id. */
 APP_TIMER_DEF(m_sleep_timer_id);                  /**< Create a variable to hold the single shot timer m_sleep_timer_id. */
 APP_TIMER_DEF(m_motorStop_timer_id);              /**< Create a variable to hold the single shot timer m_motorStop_timer_id. */
 APP_TIMER_DEF(m_repeatedBattery_timer_id);        /**< Create a variable to hold the repeated timer m_repeatedBattery_timer_id. */
-APP_TIMER_DEF(m_sampleSensorData_timer_id);       /**< Create a variable to hold the repeated timer m_sampleSensorData_timer_id. */
+APP_TIMER_DEF(m_sampleSensorData_timer_id);       /**< Create a variable to hold the repeated timer m_sampleSensorData_timer_id. (pressure and temperature sensor) */
+APP_TIMER_DEF(m_sampleIMUdata_timer_id);          /**< Create a variable to hold the repeated timer m_sampleIMUData_timer_id. */ 
 APP_TIMER_DEF(m_updateMissionLog_timer_id);       /**< Create a variable to hold the repeated timer m_updateMissionLog_timer_id. */
 
 /**@brief start timer for FSM updates.
@@ -80,6 +82,14 @@ void startUpdateMissionLogTimer(void);
 /**@brief stop timer to update mission log.
 */
 void stopUpdateMissionLogTimer(void);
+
+/**@brief start timer for reading IMU.
+*/
+void startSampleIMUdataTimer(void);
+
+/**@brief stop timer for reading IMU.
+*/
+void stopSampleIMUdataTimer(void);
 
 
 /**@brief Set new mission time.

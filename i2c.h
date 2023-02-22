@@ -6,32 +6,43 @@
 #include "nrf_drv_twi.h"
 
 #include "main.h"
+#include "mission.h"
 
 
 typedef struct{
-  float x;
-  float y;
-  float z;
+  int16_t x;
+  int16_t y;
+  int16_t z;
 }accel_t;
 
 typedef struct{
-  float x;
-  float y;
-  float z;
+  int16_t x;
+  int16_t y;
+  int16_t z;
 }gyro_t;
 
 typedef struct{
-  float x;
-  float y;
-  float z;
+  int16_t x;
+  int16_t y;
+  int16_t z;
 }mag_t; // TODO read datasheet!
 
-// ICM global variables:
+
 typedef struct{
-  accel_t accel;
-  gyro_t gyro;
-  mag_t mag;
+  int16_t x;
+  int16_t y;
+  int16_t z;
+  float sensitivity;
+}axiss_t;
+
+// ICM global variables:
+typedef struct icm_t{
+  axiss_t accel;
+  axiss_t gyro;
+  axiss_t mag;
 }icm_t;
+
+extern icm_t icm;
 
 
 void set_userbank(uint8_t bank);
@@ -53,6 +64,18 @@ void set_accelerometer_lowpass(uint8_t enable, uint8_t mode, uint16_t scale);
 
 void read_accel_data(void);
 
+void read_gyro_data(void);
+
+void read_magnetometer_data(void);
+
+void trigger_mag_io(void);
+
 void self_test(void);
+
+void mag_read(uint8_t reg, uint8_t value);
+
+void mag_write(uint8_t reg);
+
+uint8_t mag_read_reg();
 
 #endif
