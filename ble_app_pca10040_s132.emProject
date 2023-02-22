@@ -143,9 +143,6 @@
         <file file_name="Program/Mission/mission.c" />
         <file file_name="Program/Timers/timers.c" />
         <file file_name="Program/PID/PID.c" />
-        <file file_name="mockpid.c">
-          <configuration Name="Debug" build_exclude_from_build="No" />
-        </file>
       </folder>
     </folder>
     <folder Name="nRF_Segger_RTT">

@@ -30,7 +30,7 @@
 #include "i2c.h"
 #include "TMP117.h"
 #include "mission.h"
-#include "mockpid.h"
+//#include "mockpid.h"
 
 // SDK drivers
 #include "nordic_common.h"
