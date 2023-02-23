@@ -1,6 +1,8 @@
 #include "mockMission.h"
 #include "main.h"
 
+/*mock Mission tend to test mission and PID firmware in dry condition in debugg mode.*/
+
 
 //extern bool g_motorStopped;         // Flag to signal motor stopped
 //extern bool bottomLimit;          //< Flag to signal when bottom limit switch is reached             
@@ -26,7 +28,7 @@ void mockmissionInit(){
 
    mission.missionFinished      = 0;
    mission.nrOfMissions         = 0;
-   mission.missionNr[0].depth   = DEFAULT_M1_DEPTH;
+   mission.missionNr[0].depth   = 0;
    mission.missionNr[0].time    = DEFAULT_M1_TIME;
    mission.missionNr[1].depth   = DEFAULT_M2_DEPTH; 
    mission.missionNr[1].time    = DEFAULT_M2_TIME; 
@@ -64,7 +66,7 @@ void mockmissionInit(){
    }
 }
 
-/*
+
 void preparemockmisison(){
 
   mission.nrOfMissions = 0;
@@ -79,8 +81,8 @@ void preparemockmisison(){
 
   stopBatteryMeasureTimer();
 
-  SAADCdataReady = false;
-  sampleSensorData = false;
+  g_SAADCdataReady = false;
+  g_sampleSensorData = false;
 }
 
 
@@ -98,18 +100,18 @@ void runmockmission(){
   mission.currentMission = mission.missionNr[missionId];
 
   NRF_LOG_INFO("Running mock mission");
-  updateMissiontimer(20); //seconds
+  updateMissiontimer(20); //Run mission for x seconds.
   startMissiontimer();  // Current mission time periode
-  startSampleSensorDatatimer();
+  startSampleSensorDatatimer(); // start mission timer.
   while(missionId == mission.missionFinished){
 
-    if(sampleSensorData){
-      sampleSensorData = false;
+    if(g_sampleSensorData){
+      g_sampleSensorData = false;
       nrfx_saadc_sample();
       }
 
-    if(SAADCdataReady){
-        SAADCdataReady = false;
+    if(g_SAADCdataReady){
+        g_SAADCdataReady = false;
         CalcPressureAndDepth_v2();
         if( fabs(mission.currentMission.depth - mission.MeasuredData.filteredDepth) > mission.pidData.kiThreshold ) //< If x meters away from target, run as PD regulator, otherwise run as PID regulator. This is so that it regulates quicker towards target 
           pid_tune(pid, mission.pidData.kp, 0, mission.pidData.kd);
@@ -127,7 +129,9 @@ void runmockmission(){
         
         mission.timeStamp += (float)elapsedTime/32.768; // Elapsed time in milliseconds [32.768 KHz LF clock frequency]
         oldTimestamp = timeStamp;
-        
+        printf("mission timer: %d", mission.timeStamp);
+
+
         //setPistonPosition(); commented out for dry testing.
           
       }
@@ -135,4 +139,3 @@ void runmockmission(){
    }
 }
 
-*/

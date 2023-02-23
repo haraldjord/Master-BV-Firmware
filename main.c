@@ -1151,22 +1151,23 @@ int main(void){
 
     twi_init();
     init_imu();
-    TMP117_init();
+    //TMP117_init();
 
     // test RTC
-    uint32_t timeStamp_ms = 0;
+    /*uint32_t timeStamp_ms = 0;
     int timeStamp = 0, oldTimestamp = 0, elapsedTime = 0;
     startUpdateMissionLogTimer();
     updateMissiontimer(10);
     startMissiontimer();
     oldTimestamp = app_timer_cnt_get();
-    startSampleIMUdataTimer(); // sampleIMUdata every 2 sec
-    g_sampleIMUdata;
+    startSampleIMUdataTimer(); // sampleIMUdata every 2 sec*/
+    mockmissionInit();
+    preparemockmisison();
+    
     while(1){ // test mock mission
-
-        
-
-
+      
+      runmockmission();
+      
     }
     while (1) 
     {
