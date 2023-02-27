@@ -28,7 +28,7 @@ void mockmissionInit(){
 
    mission.missionFinished      = 0;
    mission.nrOfMissions         = 0;
-   mission.missionNr[0].depth   = 0;
+   mission.missionNr[0].depth   = 1;
    mission.missionNr[0].time    = DEFAULT_M1_TIME;
    mission.missionNr[1].depth   = DEFAULT_M2_DEPTH; 
    mission.missionNr[1].time    = DEFAULT_M2_TIME; 
@@ -43,7 +43,7 @@ void mockmissionInit(){
    mission.MeasuredData.pressureSensorOffset = 0; // Initialized to 0
      
    mission.pidData.kp = PID_kP;
-   mission.pidData.ki = PID_kI;
+   mission.pidData.ki = 0.1;//PID_kI;
    mission.pidData.kd = PID_kD;
    mission.pidData.kiThreshold = PID_kI_THRESHOLD;
    mission.pidData.atmosphericPressure = PSI_1ATM_PRESSURE;
@@ -69,6 +69,9 @@ void mockmissionInit(){
 
 void preparemockmisison(){
 
+  pid_tune(pid, mission.pidData.kp, mission.pidData.ki, mission.pidData.kd);
+  pid_auto(pid);  /**< Enable PID controller. */
+
   mission.nrOfMissions = 0;
   for(int i = 0; i < MAX_NR_OF_MISSIONS; i++){    // Check number of planned missions
     if(mission.missionNr[i].time != NULL)         // mission with zero time, does not count as mission
@@ -89,7 +92,8 @@ void preparemockmisison(){
 
 
 void runmockmission(){
-
+  g_sampleIMUdata = false;
+  startSampleIMUdataTimer(); // here used as timer to set new measured depth
 
   int timeStamp = 0, oldTimestamp = 0, elapsedTime = 0;
   //uint8_t tempMSB, tempLSB;
@@ -100,17 +104,17 @@ void runmockmission(){
   mission.currentMission = mission.missionNr[missionId];
 
   NRF_LOG_INFO("Running mock mission");
-  updateMissiontimer(20); //Run mission for x seconds.
+  updateMissiontimer(120); //Run mission for x seconds.
   startMissiontimer();  // Current mission time periode
   startSampleSensorDatatimer(); // start mission timer.
   while(missionId == mission.missionFinished){
 
-    if(g_sampleSensorData){
+    if(g_sampleSensorData){ // true by timer every 0.5 seconds 
       g_sampleSensorData = false;
       nrfx_saadc_sample();
       }
 
-    if(g_SAADCdataReady){
+    if(g_SAADCdataReady){ // true when SAADC has new data.
         g_SAADCdataReady = false;
         CalcPressureAndDepth_v2();
         if( fabs(mission.currentMission.depth - mission.MeasuredData.filteredDepth) > mission.pidData.kiThreshold ) //< If x meters away from target, run as PD regulator, otherwise run as PID regulator. This is so that it regulates quicker towards target 
@@ -129,7 +133,8 @@ void runmockmission(){
         
         mission.timeStamp += (float)elapsedTime/32.768; // Elapsed time in milliseconds [32.768 KHz LF clock frequency]
         oldTimestamp = timeStamp;
-        printf("mission timer: %d", mission.timeStamp);
+        printf("mission timer: %d\n", mission.timeStamp);
+        printf("-----------\n");
 
 
         //setPistonPosition(); commented out for dry testing.
@@ -137,5 +142,16 @@ void runmockmission(){
       }
 
    }
+}
+
+void CalcPressureAndDepth_mock(void){
+  // mock mission:
+  if (!g_sampleIMUdata) //Here used as timer to change depth.
+    mission.MeasuredData.filteredDepth = 0.5; // set to a constant when drytesting.
+  else
+    mission.MeasuredData.filteredDepth = 1.5;
+    printf("filtered Depth: %.2f\n", mission.MeasuredData.filteredDepth);
+}
+
 }
 

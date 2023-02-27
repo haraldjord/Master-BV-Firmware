@@ -1051,7 +1051,7 @@ void stopAdvertising(){
   bool readyToCalibrate = false;
   bool finnishCalibrating = false;
   uint8_t initiated = false;
-  bool readPressureSensor = false;
+  //bool readPressureSensor = false; changed to global variable
   uint8_t LED_Status = 2; // 2 --> initiate LED
   enablePressureSensor();
   startSampleSensorDatatimer();
@@ -1086,8 +1086,8 @@ void stopAdvertising(){
         printf("Meassured depth: %f\n\r", DEPTH);
       }
    
-    if(readPressureSensor){ // Set to true by timer, every 0.5 seconds 
-        readPressureSensor = false;
+    if(g_readPressureSensor){ // Set to true by timer, every 0.5 seconds 
+        g_readPressureSensor = false;
         nrfx_saadc_sample();
       }
 
