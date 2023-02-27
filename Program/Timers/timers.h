@@ -109,6 +109,8 @@ void uninitMissiontimer(void);
  */
 void timers_init(void);
 
+//void startMotorStopTimer(void);
+
 #endif // _TIMERS_H_
 
 

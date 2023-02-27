@@ -1086,7 +1086,7 @@ void stopAdvertising(){
         printf("Meassured depth: %f\n\r", DEPTH);
       }
    
-    if(g_readPressureSensor){ // Set to true by timer, every 0.5 seconds 
+    if(g_readPressureSensor){ // true by timer, every 0.5 seconds 
         g_readPressureSensor = false;
         nrfx_saadc_sample();
       }
@@ -1142,8 +1142,8 @@ int main(void){
     motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to make sure they are enabled when motor is running*/
 
     SDcardInit();
-    //TWIMInit();
-    //motorInit();  // Initialize Motor TODO: commented out when testing icm module.
+    //TWIMInit(); // OBSOLETE
+    motorInit();  // Initialize Motor TODO: commented out when testing icm module.
     
     missionInit();  // Initialize Mission
 
@@ -1165,8 +1165,11 @@ int main(void){
     preparemockmisison();
     
     while(1){ // test mock mission
-      
-      runmockmission();
+      MotorTest(); 
+      //runmockmission();
+
+
+      nrf_delay_ms(100000);
       
     }
     while (1) 

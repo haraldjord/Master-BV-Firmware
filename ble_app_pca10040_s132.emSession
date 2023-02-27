@@ -66,7 +66,7 @@
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="11" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Globals/globals.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="268" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/Motor/motor.c" selected="0" top="248" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="19" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mission.c" selected="0" top="18" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="4" y="73" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mockMission.c" selected="1" top="57" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="70" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mockMission.c" selected="1" top="57" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1168" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="0" top="1146" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="36" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/SAADC/SAADC.c" selected="0" top="75" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="65" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Timers/timers.c" selected="0" top="60" codecName="Default"/>

@@ -14,4 +14,6 @@ void preparemockmisison(void);
 
 void runmockmission(void);
 
+void CalcPressureAndDepth_mock(void);
+
 #endif

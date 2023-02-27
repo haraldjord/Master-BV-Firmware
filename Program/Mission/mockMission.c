@@ -116,7 +116,7 @@ void runmockmission(){
 
     if(g_SAADCdataReady){ // true when SAADC has new data.
         g_SAADCdataReady = false;
-        CalcPressureAndDepth_v2();
+        CalcPressureAndDepth_mock();
         if( fabs(mission.currentMission.depth - mission.MeasuredData.filteredDepth) > mission.pidData.kiThreshold ) //< If x meters away from target, run as PD regulator, otherwise run as PID regulator. This is so that it regulates quicker towards target 
           pid_tune(pid, mission.pidData.kp, 0, mission.pidData.kd);
         else
@@ -153,5 +153,5 @@ void CalcPressureAndDepth_mock(void){
     printf("filtered Depth: %.2f\n", mission.MeasuredData.filteredDepth);
 }
 
-}
+
 

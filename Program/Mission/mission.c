@@ -223,13 +223,15 @@ void runMission(){
 //}
 /**@snippet [Calculate Pressure and Depth]*/
 
-void CalcPressureAndDepth_v2(void){
+void CalcPressureAndDepth_v2(void){ // TODO rename.
   mission.MeasuredData.pressureVoltage =  ((mission.MeasuredData.pressure/16383)*4.5) + SAADC_VOLTAGE_ERROR;                                  /**< Raw pressure voltage voltage>*/
   mission.MeasuredData.psi = ((mission.MeasuredData.pressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE));                /**< Unfiltered psi*/
   mission.MeasuredData.unfilteredDepth = mission.MeasuredData.psi*PSI_TO_MH2O;                                                                /**< Unfiltered depth*/
   mission.MeasuredData.filteredDepth = (EMA_alpha*mission.MeasuredData.unfilteredDepth) + ((1-EMA_alpha)*mission.MeasuredData.filteredDepth); /**< EMA Filtered depth */
   mission.MeasuredData.filteredDepth = mission.MeasuredData.filteredDepth + mission.MeasuredData.pressureSensorOffset;                        /**< Filtered depth corrected for sensor offset*/
+  //printf("pressure sensor voltage: %.2f", mission.MeasuredData.pressureVoltage);
 
+  
 }
 /**@snittep [calculate Pressure and Depth] included depth offset.*/
 
