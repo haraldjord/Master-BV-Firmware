@@ -24,3 +24,6 @@ bool g_updateFSM = true;          /**< Init to true in order to access state mac
 bool g_sendNUS = false;           /**< Flag to signal Nordic UART Service to send data                */
 
 bool g_readPressureSensor = false;
+
+/*Global variables*/
+float EMA_alpha = 0.2;            /**< Exponential Moving Average 'alpha' Coefficient, initialized to 0.2*/  

@@ -106,10 +106,12 @@ void setConfigValue(char * value)
       g_sendNUS = true;
       break;
     
-    /*
-    case OFFSETPRESSURESENSOR:
+    case EMA_ALPHA_VALUE:
+      floatValue = atof(value);
+      EMA_alpha = floatValue;
+      g_sendNUS = true;
+      break;
 
-    */
     default: NRF_LOG_INFO("Unknown value in setConfigValue()");
   }
 }
@@ -321,16 +323,17 @@ void configVehicleMenu(int option)
       g_getValue = true;
       configVariable = ATM_PRESSURE;
      break;
-  
-    /*
-    case 6:
+
+   case 6:
       NRF_LOG_INFO("Option 6\n");
-      uint8_t calibrate_msg = "place vehicle in water when calibrating pressure sensor.";
-      msgLength = sizeof(calibrate_msg);
-      nus_send(calibrate_msg, msgLength);
-      pressureOffset = calibratePressureSensor();
-      configVariable = pressureOffset; 
-    /**/
+      uint8_t EMA_alpha_msg[] = "Type in alpha value for EMA filter - x.x (float) - :";
+      msgLength = sizeof(EMA_alpha_msg);
+      nus_send(EMA_alpha_msg, msgLength);
+      g_getValue = true;
+      configVariable = EMA_ALPHA_VALUE;
+      break;
+
+
 
     case 9:
       NRF_LOG_INFO("Option 9\n");
@@ -481,7 +484,7 @@ void printConfigVehicleMenu(){
 
     len0 = sprintf(data0, "*****-- Configure Vehicle -- *****\r#Number\tOption\tValue\r#1\tP\t\t%.6f\r", mission.pidData.kp);
     len1 = sprintf(data1, "#2\tI\t\t%.6f\r#3\tD\t\t%.6f\r#4\tKi Threshold\t%.6f\r", mission.pidData.ki,mission.pidData.kd,mission.pidData.kiThreshold);
-    len2 = sprintf(data2, "#5\tAtmospheric Pressure\t%.6f\r#9\tMainMenu", mission.pidData.atmosphericPressure);
+    len2 = sprintf(data2, "#5\tAtmospheric Pressure\t%.6f\r#6\tEMA filter alpha%.3f\r#9\tMainMenu", mission.pidData.atmosphericPressure, EMA_alpha);
 
    nus_send(data0, len0);
    nus_send(data1, len1);

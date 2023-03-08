@@ -47,7 +47,7 @@
 #define DEFAULT_M2_DEPTH 1.0      /**< Default mission2 depth in meter */
 #define DEFAULT_M2_TIME 180       /**< Default mission1 depth in seconds */
 
-#define EMA_alpha 0.1               /**< Exponential Moving Average 'alpha' Coefficient*/
+//#define EMA_alpha 0.1           /**< Exponential Moving Average 'alpha' Coefficient*/ //OBSOLETE as it's accessed through menue.
 
 
 //extern bool motorStopped;         /**< Flag to signal motor stopped*/
