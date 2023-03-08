@@ -42,7 +42,7 @@ void motorDown(){ // Dive deeper
 void motorStop(){
     rxMotor.msgReceived = false;
     sendCmd(1,3,0,0,0);
-    NRF_LOG_ERROR("motorStop");
+    NRF_LOG_INFO("motorStop");
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
 }
@@ -118,7 +118,7 @@ void setPistonPosition(){
   
   if(PIDoutput < 0.000) PIDoutput = 0.000; // Already done in PID controler file.
   else if(PIDoutput > 0.055) PIDoutput = 0.055;
-  long newPistonPosition = -(PIDoutput*51200000.0);
+  long newPistonPosition = -(PIDoutput*motorSettings.microStep*motorSettings.fullStep*1000);// Position in SI units [meters]     ;51200000.0);
   sendCmd(1,4,0,0,newPistonPosition);
    while(!rxMotor.msgReceived);
    rxMotor.msgReceived = false;
@@ -204,7 +204,7 @@ void motorInit(){
     motorSettings.maxCurrent = 66;                                                    
 
     if (motorSettings.v_int > 2047){
-        NRF_LOG_ERROR("Internal velocity of motor exceeds physical limmit. Restart controller with new parameters!");
+        NRF_LOG_ERROR("Internal velocity of motor exceeds physical limmit. Decrease micro step settings and restart controller with new parameters!");
         while(1){} // restart firmware to avoid damage on stepper motor
     }
     else if (motorSettings.v_int < 0){
@@ -238,9 +238,9 @@ void motorInit(){
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
 
-    //sendCmd(1,5,140,0,motorSettings.microStepSettings);   /**< Set micro step to 2^n*/
-    //while (!rxMotor.msgReceived);
-    //rxMotor.msgReceived = false;
+    sendCmd(1,5,140,0,motorSettings.microStepSettings);   /**< Set micro step to 2^n*/
+    while (!rxMotor.msgReceived);
+    rxMotor.msgReceived = false;
 
     sendCmd(1,5,4,0,motorSettings.v_int);       /**< Set max positioning speed (integer) [1 - 2047]. */
     while(!rxMotor.msgReceived);
@@ -304,9 +304,21 @@ rxMotor.msgReceived = false;
 }
 /**@snippet [Set Surface Reference Point]*/
 
-/*
-void setPositionVelocity(int){
-}*/ // TODO
+
+void testPositionMovement(float toPos){
+  mission.pidData.output = toPos;
+  float atPos;
+  atPos = getPistonPosition();
+  printf("pos1: %.2f\n", atPos);
+  setPistonPosition();
+  nrf_delay_ms(10000);
+  atPos = getPistonPosition();
+  printf("pos2: %.2f\n", atPos);
+  
+
+
+
+}
 
 
 

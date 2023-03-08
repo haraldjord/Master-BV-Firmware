@@ -167,7 +167,7 @@ void setSurfaceReferencePoint(void);
 * @Details Set velocity for stepper motor in mm/sec (linear movement) 
 *   This is done to easely test PID controller bandwidth for different linear velocities 
 */
-void setPositionVelocity(int);
+void testPositionMovement(float);
 
 
 #endif
