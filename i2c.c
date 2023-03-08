@@ -16,7 +16,7 @@ void init_imu(){
 
   // read chip ID (should be 0xea)
   uint8_t chipID = icm_read(0); 
-  printf("chip ID: %x\n", chipID);
+  printf("icm20048 Chip ID: %x\n", chipID);
   if (chipID != 0xea)
       NRF_LOG_ERROR("Unable to find IMC module");
 
@@ -46,6 +46,7 @@ void init_imu(){
   set_userbank(3);
   icm_write(0x01, 0x4d);
   icm_write(0x02, 0x01);
+  NRF_LOG_INFO("Finnish initiating ICM motion sensor\n\r");
 }
 
 
@@ -171,7 +172,6 @@ void read_accel_data(void){
   icm.accel.z = tempZ;
 
   printf("accelerometer: %.2f %.2f %.2f\n", (float)icm.accel.x/icm.accel.sensitivity, (float)icm.accel.y/icm.accel.sensitivity, (float)icm.accel.z/icm.accel.sensitivity);
-  //printf("MSB: %x %x %x\n", accelerometerData.xMSB, accelerometerData.yMSB, accelerometerData.zMSB);
 }
 
 void read_gyro_data(){
