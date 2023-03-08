@@ -65,13 +65,16 @@ void missionInit(){
 
    disablePressureSensor();
    // initiate EMA filter. Might be unnesesarrly, as pressure offset is initateted to zero??
+   //mission.MeasuredData.filteredDepth = mission.MeasuredData.pressureSensorOffset; INITIATED TO ZERO!!!
+
+    /*
    if (mission.MeasuredData.pressureSensorOffset != NULL){
       mission.MeasuredData.filteredDepth = mission.MeasuredData.pressureSensorOffset;
    }
    else{
       mission.MeasuredData.pressureSensorOffset = 0;
       mission.MeasuredData.filteredDepth = 0;
-   }
+   }*/
 }
 /**@snippet [Mission Init]*/
 
@@ -156,7 +159,7 @@ void runMission(){
               mission.timeStamp += (float)elapsedTime/32.768; // Elapsed time in milliseconds [32.768 KHz LF clock frequency]
               oldTimestamp = timeStamp;
               
-              //setPistonPosition(); commented out for dry testing.
+              setPistonPosition();
                 
             }
 
@@ -224,12 +227,13 @@ void runMission(){
 /**@snippet [Calculate Pressure and Depth]*/
 
 void CalcPressureAndDepth_v2(void){ // TODO rename.
-  mission.MeasuredData.pressureVoltage =  ((mission.MeasuredData.pressure/16383)*4.5) + SAADC_VOLTAGE_ERROR;                                  /**< Raw pressure voltage voltage>*/
+  mission.MeasuredData.batteryVoltage = ((mission.MeasuredData.battery/16383.0)*24.0)+SAADC_VOLTAGE_ERROR;                                    /**< Battery voltage measured>*/
+  mission.MeasuredData.pressureVoltage =  ((mission.MeasuredData.pressure/16383.0)*4.5) + SAADC_VOLTAGE_ERROR;                                  /**< Raw pressure voltage voltage>*/
   mission.MeasuredData.psi = ((mission.MeasuredData.pressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE));                /**< Unfiltered psi*/
-  mission.MeasuredData.unfilteredDepth = mission.MeasuredData.psi*PSI_TO_MH2O;                                                                /**< Unfiltered depth*/
+  mission.MeasuredData.unfilteredDepth = mission.MeasuredData.psi*PSI_TO_MH2O  - mission.MeasuredData.pressureSensorOffset;                                                                /**< Unfiltered depth*/
   mission.MeasuredData.filteredDepth = (EMA_alpha*mission.MeasuredData.unfilteredDepth) + ((1-EMA_alpha)*mission.MeasuredData.filteredDepth); /**< EMA Filtered depth */
-  mission.MeasuredData.filteredDepth = mission.MeasuredData.filteredDepth + mission.MeasuredData.pressureSensorOffset;                        /**< Filtered depth corrected for sensor offset*/
-  //printf("pressure sensor voltage: %.2f", mission.MeasuredData.pressureVoltage);
+  mission.MeasuredData.filteredDepth = mission.MeasuredData.filteredDepth;// + mission.MeasuredData.pressureSensorOffset;                        /**< Filtered depth corrected for sensor offset*/
+  printf("pressure sensor voltage: %.2f", mission.MeasuredData.pressureVoltage);
 
   
 }
@@ -255,17 +259,17 @@ void updateMissionLog(){
      missionLog.setpoint                = mission.currentMission.depth;
      missionLog.pistonPosition          = mission.pidData.pistonPosition;
      missionLog.pidDataOut.PID_output   = mission.pidData.output;
-     missionLog.pidDataOut.kp   = mission.pidDataOut.kp;
-     missionLog.pidDataOut.ki   = mission.pidDataOut.ki;
-     missionLog.pidDataOut.kd   = mission.pidDataOut.kd;
-     missionLog.pressureVoltage = mission.MeasuredData.pressureVoltage;
-     // missionLog.pressureDepth   = mission.MeasuredData.measuredDepth; OBSOLETE
-     missionLog.pressurePsi     = mission.MeasuredData.psi;
-     missionLog.unfilteredDepth = mission.MeasuredData.unfilteredDepth;
-     missionLog.filteredDepth   = mission.MeasuredData.filteredDepth;
-     //missionLog.pressurePascal  = mission.MeasuredData.pascal; OBSOLETE
-     missionLog.batteryVoltage  = mission.MeasuredData.batteryVoltage;
-     missionLog.temperature     = mission.MeasuredData.outside_temperature;
+     missionLog.pidDataOut.kp           = mission.pidDataOut.kp;
+     missionLog.pidDataOut.ki           = mission.pidDataOut.ki;
+     missionLog.pidDataOut.kd           = mission.pidDataOut.kd;
+     missionLog.pressureVoltage         = mission.MeasuredData.pressureVoltage;
+     // missionLog.pressureDepth        = mission.MeasuredData.measuredDepth; OBSOLETE
+     missionLog.pressurePsi             = mission.MeasuredData.psi;
+     missionLog.unfilteredDepth         = mission.MeasuredData.unfilteredDepth;
+     missionLog.filteredDepth           = mission.MeasuredData.filteredDepth;
+     //missionLog.pressurePascal        = mission.MeasuredData.pascal; OBSOLETE
+     missionLog.batteryVoltage          = mission.MeasuredData.batteryVoltage;
+     missionLog.temperature             = mission.MeasuredData.outside_temperature;
      /**< ICM motion data is stored as int16_t to reduce space, for external analysis divide by 128 (resolution)*/
      missionLog.motionData.accel.x            = icm.accel.x;
      missionLog.motionData.accel.y            = icm.accel.y;
@@ -276,6 +280,7 @@ void updateMissionLog(){
      missionLog.motionData.gyro.z             = icm.gyro.z;
      missionLog.motionData.gyro.sensitivity   = icm.gyro.sensitivity;
 
+    g_missionLogUpdated = true;
     }
 }
 /**@snippet [Update mission log]*/

@@ -77,7 +77,7 @@ static void sampleIMUdata_timer_handler(void * p_context){
 static void updateMissionLog_timer_handler(void * p_context)
 {
   updateMissionLog();
-  g_missionLogUpdated = true;
+  //g_missionLogUpdated = true;
 }
 
 

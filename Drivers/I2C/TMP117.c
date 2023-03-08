@@ -38,6 +38,7 @@ void TMP117_init(void){
 
   uint16_t test = TMP117_read(TMP117_T_HIGH_LIMIT);
 
+  NRF_LOG_INFO("Finish initiating TMP117 sensor\n\r");
 }
 
 

@@ -1110,6 +1110,7 @@ void stopAdvertising(){
 /**@brief Function for application main entry.
  */
 int main(void){
+    printf("Hello");
     pwm_init(); /**< Initialize PWM before anything else to avoid the LED on full strength when uninitialized.*/
     float motorSpeed = 1;/**< variable to measure motor speed while returning to lower limit switch*/
     
@@ -1143,6 +1144,7 @@ int main(void){
 
     SDcardInit();
     //TWIMInit(); // OBSOLETE
+    printf("Initiating motor now.\n");
     motorInit();  // Initialize Motor TODO: commented out when testing icm module.
     
     missionInit();  // Initialize Mission
@@ -1151,29 +1153,35 @@ int main(void){
 
     twi_init();
     init_imu();
-    //TMP117_init();
+    TMP117_init();
 
-    // test RTC
-    /*uint32_t timeStamp_ms = 0;
-    int timeStamp = 0, oldTimestamp = 0, elapsedTime = 0;
-    startUpdateMissionLogTimer();
-    updateMissiontimer(10);
-    startMissiontimer();
-    oldTimestamp = app_timer_cnt_get();
-    startSampleIMUdataTimer(); // sampleIMUdata every 2 sec*/
-    mockmissionInit();
-    preparemockmisison();
-    
+/*    enablePressureSensor();
     while(1){ // test mock mission
-      MotorTest(); 
-      //runmockmission();
 
+      CalcPressureAndDepth_v2();
+      float temp = TMP117_read_temp();
+      read_accel_data();
+      read_gyro_data();
+      printf("Temperature: %.4f\n", temp);
 
-      nrf_delay_ms(100000);
+      nrf_delay_ms(2000);
       
-    }
+    }*/
+
+
+    char initHall = 0;
+    bool hallCountStop = false;
     while (1) 
     {
+
+         
+      /*if (initHall == 10){
+        fsm.hallEffectButton = true;
+        hallCountStop = true;
+        initHall = 100;
+        } // workaround to enter BLE state when hall effekt button doesn't work properly
+      if (!hallCountStop)
+        initHall ++;*/
 
      if(g_updateFSM){
       g_updateFSM = false;
