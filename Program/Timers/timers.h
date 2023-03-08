@@ -19,7 +19,7 @@
 #define UPDATE_MISSIONLOG_TIMER APP_TIMER_TICKS(500)       /**< Update mission log every 0.5 sec */
 #define MEASURE_BATTERY_TIMER APP_TIMER_TICKS(10000)       /**< Measure battery voltage everey 10 sec when not in mission state */
 #define SENSORS_SAMPLE_TIMER APP_TIMER_TICKS(500)          /**< Set time between each SAADC and TMP117 sample.*/
-#define ICM_SAMPLE_TIMER APP_TIMER_TICKS(1000)              /**< set timer between reading of IMU to 0.1 sec, result in 5 measurements before log is updated */
+#define ICM_SAMPLE_TIMER APP_TIMER_TICKS(10000)              /**< set timer between reading of IMU to 0.1 sec, result in 5 measurements before log is updated */
 #define UPDATE_FSM_TIMER APP_TIMER_TICKS(500)              /**< When not in mission state update FSM within i strict interval. Not in use yet */
 #define KHZ_TO_SEC 125000                                  /**< Convert kHz to seconds to set mission timer*/
 
@@ -108,6 +108,8 @@ void uninitMissiontimer(void);
  * @details Initializes the timer module. This creates and starts application timers.
  */
 void timers_init(void);
+
+//void startMotorStopTimer(void);
 
 #endif // _TIMERS_H_
 

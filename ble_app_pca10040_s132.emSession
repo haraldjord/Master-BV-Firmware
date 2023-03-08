@@ -2,8 +2,21 @@
 <session>
  <Bookmarks/>
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
-  <BreakpointListItem trigger="" line="261" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="i2c.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="263" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="i2c.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="220" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="i2c.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="261" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="i2c.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="263" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="i2c.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1156" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1160" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1161" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1166" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1167" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="1174" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="129" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="Program/Mission/mission.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="134" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="Program/Mission/mission.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="142" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="Program/Mission/mission.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="156" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="Program/Mission/mockMission.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="206" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="Drivers/Motor/motor.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="323" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="Drivers/SDcard/SDcard.c" useHWbreakpoint="false"/>
  </Breakpoints>
  <ExecutionProfileWindow/>
  <FrameBufferWindow>
@@ -27,7 +40,9 @@
   <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;Application"/>
   <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;Application;Drivers"/>
   <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;Application;Program"/>
-  <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;nRF_Drivers"/>
+  <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;nRF_Libraries"/>
+  <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;nRF_Segger_RTT"/>
+  <ProjectSessionItem path="ble_app_pca10040_s132;ble_app;Segger Startup Files"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/internal;CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr" binaryNodes="" asciiNodes="" openNodes="CPU;CPU - Current Context" name="ble_app" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -62,19 +77,30 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="27" useTextEdit="1" useBinaryEdit="0" left="0" path="main.h" selected="0" top="3" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="4" useTextEdit="1" useBinaryEdit="0" left="0" path="i2c.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="861" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="0" top="848" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="53" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/TWIM/TWIM_v2.c" selected="0" top="41" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/TWIM/TWIM_v2.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="75" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mission.h" selected="1" top="78" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="177" useTextEdit="1" useBinaryEdit="0" left="0" path="i2c.c" selected="0" top="47" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="136" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/SDcard/SDcard.c" selected="0" top="115" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="3" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/SDcard/SDcard.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="92" y="65" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mission.c" selected="0" top="52" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="40" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/Motor/motor.c" selected="0" top="16" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Timers/timers.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Timers/timers.h" selected="0" top="12" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="26" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Globals/globals.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="15" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Globals/globals.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="205" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/Motor/motor.c" selected="0" top="187" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="151" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mission.c" selected="0" top="139" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mockMission.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="1183" useTextEdit="1" useBinaryEdit="0" left="0" path="main.c" selected="0" top="1167" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="36" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/SAADC/SAADC.c" selected="0" top="72" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="78" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Timers/timers.c" selected="0" top="67" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="31" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/TWIM/TWIM.c" selected="0" top="12" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="40" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/I2C/TMP117.c" selected="0" top="27" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="712" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Menu/menu.c" selected="0" top="701" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="206" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/FSM/FSM.c" selected="0" top="299" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="30" y="16" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Mission/mockMission.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="169" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/Motor/motor.h" selected="0" top="151" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="111" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/Timers/timers.h" selected="0" top="93" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="80" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/TWIM/TWIM_v2.c" selected="0" top="67" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="219" useTextEdit="1" useBinaryEdit="0" left="0" path="i2c.c" selected="0" top="210" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="sdk_config.h" selected="0" top="96" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="99" useTextEdit="1" useBinaryEdit="0" left="0" path="../SDK_dir/components/libraries/util/app_error_weak.c" selected="0" top="86" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="292" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../Documents/specialisation-project/BuoyancyFirmwareFiles/source/thumb_crt0.s" selected="0" top="279" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="6" y="44" useTextEdit="1" useBinaryEdit="0" left="0" path="i2c.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="30" y="322" useTextEdit="1" useBinaryEdit="0" left="0" path="Drivers/SDcard/SDcard.c" selected="0" top="219" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="917" useTextEdit="1" useBinaryEdit="0" left="0" path="../SDK_dir/components/libraries/timer/app_timer.c" selected="0" top="904" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="118" useTextEdit="1" useBinaryEdit="0" left="0" path="Program/PID/PID.c" selected="1" top="90" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="ble_app" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="/Users/oddingehalsos/Desktop/BuoyancyFirmware/ble_app/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/BuoyancyFirmware/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/drivers/src/nrfx_clock.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/BuoyancyFirmware/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/drivers/src/nrfx_gpiote.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/SDK_dir/modules/nrfx/drivers/src/nrfx_clock.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/drivers/src/nrfx_timer.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/BuoyancyFirmware/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/mdk/ses_startup_nrf52.s&#xa;/Users/oddingehalsos/Documents/BLE_Projects/SDK_dir/modules/nrfx/drivers/src/nrfx_timer.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/mdk/ses_startup_nrf_common.s&#xa;/Users/oddingehalsos/Documents/BLE_Projects/SDK_dir/modules/nrfx/mdk/ses_startup_nrf_common.s" fileDialogInitialDirectory="C:/Users/haral/Desktop/Master/Master-BV-Firmware" debugSearchPath="" autoConnectCapabilities="3199"/>
+ <ARMCrossStudioWindow activeProject="ble_app" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="/Users/oddingehalsos/Desktop/BuoyancyFirmware/ble_app/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/BuoyancyFirmware/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/drivers/src/nrfx_clock.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/BuoyancyFirmware/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/drivers/src/nrfx_gpiote.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/SDK_dir/modules/nrfx/drivers/src/nrfx_clock.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/drivers/src/nrfx_timer.c&#xa;/Users/oddingehalsos/Documents/BLE_Projects/BuoyancyFirmware/Drivers/SAADC/modified_nrfx_saadc.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/mdk/ses_startup_nrf52.s&#xa;/Users/oddingehalsos/Documents/BLE_Projects/SDK_dir/modules/nrfx/drivers/src/nrfx_timer.c&#xa;/Users/oddingehalsos/Desktop/BuoyancyFirmware/SDK_dir/modules/nrfx/mdk/ses_startup_nrf_common.s&#xa;/Users/oddingehalsos/Documents/BLE_Projects/SDK_dir/modules/nrfx/mdk/ses_startup_nrf_common.s" fileDialogInitialDirectory="C:/Users/haral/Desktop/Master/Master-BV-Firmware/Program/Mission" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

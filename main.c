@@ -66,14 +66,14 @@ static ble_uuid_t m_adv_uuids[]          =                                      
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
 
-bool getValue = false;          /**< Menu is waiting for value from BLE application                 */
-bool transferDataFlag = false;  /**< Menu is in the process of transfering data to BLE application  */
-bool updateFSM = true;          /**< Init to true in order to access state machine                  */
-bool sendNUS = false;           /**< Flag to signal Nordic UART Service to send data                */
-bool motorStopped = false;      /**< Flag to signal if motor is stopped or need to be stopped       */
-bool isAdvertising = false;     /**< Flag to signal if advertising or not                           */
-bool bottomLimit = false;       /**< Flag to signal when bottom limit switch is reached             */
-bool readPressureSensor = false;
+//bool getValue = false;          /**< Menu is waiting for value from BLE application                 */
+//bool transferDataFlag = false;  /**< Menu is in the process of transfering data to BLE application  */
+//bool updateFSM = true;          /**< Init to true in order to access state machine                  */
+//bool sendNUS = false;           /**< Flag to signal Nordic UART Service to send data                */
+//bool motorStopped = false;      /**< Flag to signal if motor is stopped or need to be stopped       */
+//bool isAdvertising = false;     /**< Flag to signal if advertising or not                           */
+//bool bottomLimit = false;       /**< Flag to signal when bottom limit switch is reached             */
+//bool readPressureSensor = false;
 
 
 mission_t mission;              /**< Create mission struct instance */
@@ -97,7 +97,7 @@ void limitSwitchBottom_handler(void){
 
   NRF_LOG_INFO("Limit Switch BOTTOM_Interrupt_HANDLER");  
   nrf_delay_ms(300);  /**< Debounce delay. */
-  bottomLimit = true;
+  g_bottomLimit = true;
 
 }
 
@@ -274,7 +274,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 {
     if (p_evt->type == BLE_NUS_EVT_RX_DATA){
 
-        if(!getValue && !transferDataFlag){  /**< GetValue: configuration value for mission (depth and time), PID, and threshold. transferDataFlag: to send file number to @ref transfer_menu()*/
+        if(!g_getValue && !g_transferDataFlag){  /**< GetValue: configuration value for mission (depth and time), PID, and threshold. transferDataFlag: to send file number to @ref transfer_menu()*/
           int option = atoi(p_evt->params.rx_data.p_data);
           switch(currentMenu){
               case MAINMENU:
@@ -291,7 +291,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
                 break;
               default: NRF_LOG_INFO("UNKNOWN MENU");
               }
-          }else if(transferDataFlag) transferData(p_evt->params.rx_data.p_data);
+          }else if(g_transferDataFlag) transferData(p_evt->params.rx_data.p_data);
            else setConfigValue(p_evt->params.rx_data.p_data);
 
       }
@@ -301,7 +301,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
     else if(p_evt->type == BLE_NUS_EVT_COMM_STARTED)
       { NRF_LOG_ERROR("nus_data_handler: BLE_NUS_EVT_COMM_STARTED: Notification has been enabled");
        currentMenu = MAINMENU;  /**< Send MainMenu as soon as new connection is established*/
-       sendNUS = true;
+       g_sendNUS = true;
        }
     
     else if(p_evt->type == BLE_NUS_EVT_COMM_STOPPED)
@@ -337,7 +337,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
             APP_ERROR_CHECK(err_code);
-            isAdvertising = false;
+            g_isAdvertising = false;
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
@@ -964,7 +964,7 @@ void advertising_start(bool erase_bonds)
     {
         ret_code_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
         APP_ERROR_CHECK(err_code);
-        isAdvertising = true;
+        g_isAdvertising = true;
     }
 }
 
@@ -1015,10 +1015,10 @@ bool BLEconnected(){
 */
 void stopAdvertising(){
 
-  if(isAdvertising){
+  if(g_isAdvertising){
     ret_code_t err_code = sd_ble_gap_adv_stop(m_advertising.adv_handle);
     APP_ERROR_CHECK(err_code);
-    isAdvertising = false;
+    g_isAdvertising = false;
     }
 
 }
@@ -1051,7 +1051,7 @@ void stopAdvertising(){
   bool readyToCalibrate = false;
   bool finnishCalibrating = false;
   uint8_t initiated = false;
-  readPressureSensor = false;
+  //bool readPressureSensor = false; changed to global variable
   uint8_t LED_Status = 2; // 2 --> initiate LED
   enablePressureSensor();
   startSampleSensorDatatimer();
@@ -1064,8 +1064,8 @@ void stopAdvertising(){
     readPressureSensor = false;
     }*/
 
-    if(SAADCdataReady){
-        SAADCdataReady = false;
+    if(g_SAADCdataReady){
+        g_SAADCdataReady = false;
         PressureVoltage = ((mission.MeasuredData.pressure/16383.0)*(9.0/2.0))+SAADC_VOLTAGE_ERROR;
         //printf("pressure voltage: %f\n\r", PressureVoltage);
 
@@ -1086,8 +1086,8 @@ void stopAdvertising(){
         printf("Meassured depth: %f\n\r", DEPTH);
       }
    
-    if(readPressureSensor){ // Set to true by timer, every 0.5 seconds 
-        readPressureSensor = false;
+    if(g_readPressureSensor){ // true by timer, every 0.5 seconds 
+        g_readPressureSensor = false;
         nrfx_saadc_sample();
       }
 
@@ -1110,6 +1110,7 @@ void stopAdvertising(){
 /**@brief Function for application main entry.
  */
 int main(void){
+    printf("Hello");
     pwm_init(); /**< Initialize PWM before anything else to avoid the LED on full strength when uninitialized.*/
     float motorSpeed = 1;/**< variable to measure motor speed while returning to lower limit switch*/
     
@@ -1142,8 +1143,9 @@ int main(void){
     motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to make sure they are enabled when motor is running*/
 
     SDcardInit();
-    //TWIMInit();
-    //motorInit();  // Initialize Motor TODO: commented out when testing icm module.
+    //TWIMInit(); // OBSOLETE
+    printf("Initiating motor now.\n");
+    motorInit();  // Initialize Motor TODO: commented out when testing icm module.
     
     missionInit();  // Initialize Mission
 
@@ -1153,37 +1155,47 @@ int main(void){
     init_imu();
     TMP117_init();
 
-    // test RTC
-    uint32_t timeStamp_ms = 0;
-    int timeStamp = 0, oldTimestamp = 0, elapsedTime = 0;
-    startUpdateMissionLogTimer();
-    updateMissiontimer(10);
-    startMissiontimer();
-    oldTimestamp = app_timer_cnt_get();
-    startSampleIMUdataTimer(); // sampleIMUdata every 2 sec
-    extern bool sampleIMUdata;
+/*    enablePressureSensor();
     while(1){ // test mock mission
 
-        
+      CalcPressureAndDepth_v2();
+      float temp = TMP117_read_temp();
+      read_accel_data();
+      read_gyro_data();
+      printf("Temperature: %.4f\n", temp);
+
+      nrf_delay_ms(2000);
+      
+    }*/
 
 
-    }
+    char initHall = 0;
+    bool hallCountStop = false;
     while (1) 
     {
 
-     if(updateFSM){
-      updateFSM = false;
+         
+      /*if (initHall == 10){
+        fsm.hallEffectButton = true;
+        hallCountStop = true;
+        initHall = 100;
+        } // workaround to enter BLE state when hall effekt button doesn't work properly
+      if (!hallCountStop)
+        initHall ++;*/
+
+     if(g_updateFSM){
+      g_updateFSM = false;
       FSM();  
         
-      if(motorStopped == false){
+      if(g_motorStopped == false){
         stopMotorAtSurface();
         setReferencePositionToZero();
         }
       }
 
 
-      if(sendNUS){  /**< Call NUS data transmission by setting flag: sendNUS*/
-        sendNUS = false;
+      if(g_sendNUS){  /**< Call NUS data transmission by setting flag: sendNUS*/
+        g_sendNUS = false;
         NRF_LOG_ERROR("currentMenu: %d",currentMenu);
         switch(currentMenu){
           case MAINMENU: printMainMenu(); break;

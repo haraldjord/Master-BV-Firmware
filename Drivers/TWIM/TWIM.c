@@ -13,8 +13,8 @@
  */
 
 nrfx_twim_t m_twim = NRFX_TWIM_INSTANCE(0); // Create TWIM instance
-extern bool TMP117dataReady;                /**< Flag to signal data from TMP117 temmperature sensor is ready to be read*/
-extern bool receiveTMP117;                  /**< Flag to signal waiting for data from TMP117 temmperature sensor is ready to be read*/
+//extern bool TMP117dataReady;                /**< Flag to signal data from TMP117 temmperature sensor is ready to be read*/
+//extern bool receiveTMP117;                  /**< Flag to signal waiting for data from TMP117 temmperature sensor is ready to be read*/
 uint8_t cnt = 0;                            /**< Counter variable to count the number of received bytes over TWIM*/
 
 /**@brief Handler function for Two Wire Interface Master module
@@ -28,9 +28,9 @@ nrfx_twim_evt_handler_t twim_Handler(nrfx_twim_evt_t const * p_event, void * p_c
   if(p_event->type == NRFX_TWIM_EVT_DONE){
     //NRF_LOG_INFO("NRFX_TWIM_EVT_DONE");
     cnt++;
-    if(receiveTMP117 && cnt >= 3){
-      receiveTMP117 = false;
-      TMP117dataReady = true;
+    if(g_receiveTMP117 && cnt >= 3){
+      g_receiveTMP117 = false;
+      g_TMP117dataReady = true;
       cnt = 0;
       }
    }else if (p_event->type == NRFX_TWIM_EVT_ADDRESS_NACK){

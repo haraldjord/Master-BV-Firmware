@@ -26,6 +26,24 @@ typedef struct{
   long value;       /**< Returned data value in case of a read command*/
 }rxMotor_t;
 
+
+/** @brief structure with related motor settings*/
+
+typedef struct{
+  int pulse_divisor;       /**< Set pulse divisor to 1 - make sure to not exeed physical limits. */
+  int microStepSettings;   /**< integer written to the motor to set micro step */
+  int microStep;           /**< micro step = 2^n where n is micro step settings, written to the motor  */
+  int fullStep;            /**< Default value 1.8 degrees */
+  float v_rps;             /**< rounds per second, where Linear speed of pistion =  v_rps*1mm  [mm/s] */
+  int v_pps;               /**< Set max positioning speed (integer) [1 - 2047]. */
+  long int v_int;          /**< Internal speed of motor*/
+  int maxVelocity;         /**< Set max speed in velocity mode (integer) [1 - 2047]. */
+
+  int StandbyCurrent;         /**< Set standby current -(0-255). */
+  int maxCurrent;             /**< Set max current -max motor power- (0-255). */
+  
+}motorSettings_t;
+
 /**@brief Vehicle float up towards the surface - Move piston down
 */
 void motorUp(void);
@@ -135,14 +153,22 @@ void motorInit(void);
  */
 void stopMotorAtSurface(void);
 
- /**@brief Set surface reference point to zero
- *
- * @details Move piston position all the way to the bottom (maximum volum, minimum density).
- *          When bottom limit switch is triggered, set reference point to zero in order to define surface level.
- *          This is done to make sure vehicle float to surface, even in case of system reset.
- *
- */
- void setSurfaceReferencePoint(void);
+/**@brief Set surface reference point to zero
+*
+* @details Move piston position all the way to the bottom (maximum volum, minimum density).
+*          When bottom limit switch is triggered, set reference point to zero in order to define surface level.
+*          This is done to make sure vehicle float to surface, even in case of system reset.
+*
+*/
+void setSurfaceReferencePoint(void);
+
+
+/*@brief Set position velocity for stepper motor.
+* @Details Set velocity for stepper motor in mm/sec (linear movement) 
+*   This is done to easely test PID controller bandwidth for different linear velocities 
+*/
+void testPositionMovement(float);
+
 
 #endif
 

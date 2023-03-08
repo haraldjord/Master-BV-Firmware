@@ -335,13 +335,13 @@ void writeMissionLog(){
  // n += sprintf(&buffer[n],"%f,",missionLog.pressurePascal); OBSOLETE
   n += sprintf(&buffer[n],"%f,",missionLog.batteryVoltage);
   n += sprintf(&buffer[n],"%f,",missionLog.temperature);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.accel.x);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.accel.y);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.accel.z);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.accel.sensitivity);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.gyro.x);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.gyro.y);
-  n += sprintf(&buffer[n],"%f",missionLog.motionData.gyro.z);
+  n += sprintf(&buffer[n],"%d,",missionLog.motionData.accel.x);
+  n += sprintf(&buffer[n],"%d,",missionLog.motionData.accel.y);
+  n += sprintf(&buffer[n],"%d,",missionLog.motionData.accel.z);
+  n += sprintf(&buffer[n],"%f,",missionLog.motionData.accel.sensitivity);
+  n += sprintf(&buffer[n],"%d,",missionLog.motionData.gyro.x);
+  n += sprintf(&buffer[n],"%d,",missionLog.motionData.gyro.y);
+  n += sprintf(&buffer[n],"%d,",missionLog.motionData.gyro.z);
   n += sprintf(&buffer[n],"%f\r\n",missionLog.motionData.gyro.sensitivity);
 
   f_err_code = f_write(&file, buffer, n, &bytes_written);

@@ -2,8 +2,8 @@
 #include "motor.h"
 #include "app_uart.h"
 
-extern bool bottomLimit;
-extern bool motorStopped;
+//extern bool bottomLimit;
+//extern bool motorStopped;
 
 /** @file
  *
@@ -15,6 +15,7 @@ extern bool motorStopped;
  */
 
 rxMotor_t rxMotor = {0}; /**< Reply message instance*/
+motorSettings_t motorSettings; /**< Motor settings instance*/
 extern mission_t mission;
 
 void motorUp(){ // UP towards Surface
@@ -22,7 +23,7 @@ void motorUp(){ // UP towards Surface
     sendCmd(1,1,0,0,1000);
    while(!rxMotor.msgReceived);
    rxMotor.msgReceived = false;
-       NRF_LOG_ERROR("motorUp");
+       NRF_LOG_INFO("motorUp");
 }
 /**@snippet [Vehicle float up] */
 
@@ -32,7 +33,7 @@ void motorDown(){ // Dive deeper
     sendCmd(1,2,0,0,1000);
    while(!rxMotor.msgReceived);
    rxMotor.msgReceived = false;
-    NRF_LOG_ERROR("motorDown");
+    NRF_LOG_INFO("motorDown");
 }
 /**@snippet [Vehicle dive deeper] */
 
@@ -41,7 +42,7 @@ void motorDown(){ // Dive deeper
 void motorStop(){
     rxMotor.msgReceived = false;
     sendCmd(1,3,0,0,0);
-    NRF_LOG_ERROR("motorStop");
+    NRF_LOG_INFO("motorStop");
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
 }
@@ -115,9 +116,9 @@ void setPistonPosition(){
   rxMotor.msgReceived = false;
   float PIDoutput = mission.pidData.output;
   
-  if(PIDoutput < 0.000) PIDoutput = 0.000;
+  if(PIDoutput < 0.000) PIDoutput = 0.000; // Already done in PID controler file.
   else if(PIDoutput > 0.055) PIDoutput = 0.055;
-  long newPistonPosition = -(PIDoutput*51200000.0);
+  long newPistonPosition = -(PIDoutput*motorSettings.microStep*motorSettings.fullStep*1000);// Position in SI units [meters]     ;51200000.0);
   sendCmd(1,4,0,0,newPistonPosition);
    while(!rxMotor.msgReceived);
    rxMotor.msgReceived = false;
@@ -188,14 +189,38 @@ void MotorTest(){
 
 void motorInit(){
 
+    /*See dataSheet TMCM 1161 firmware manual chapter 6 for details regarding velocity in rounds per second and internal speed calculation*/
+
+    motorSettings.pulse_divisor = 1;      // change this variable for setting pulse divider
+    motorSettings.microStepSettings = 8; // change this parameter for settings micro step 
+    motorSettings.microStep = pow(2, motorSettings.microStepSettings); 
+    motorSettings.fullStep = 200;
+    motorSettings.v_rps = 2.44;           // change this parameter for setting linear velocity [mm/s] 
+    motorSettings.v_pps = motorSettings.v_rps*motorSettings.fullStep*motorSettings.microStep;                     
+    motorSettings.v_int = motorSettings.v_pps*pow(2, motorSettings.pulse_divisor)*2048*32/(16*pow(10,6));   
+    motorSettings.maxVelocity = motorSettings.v_int;          // internal velocity same as position velocity.            
+
+    motorSettings.StandbyCurrent = 0;         
+    motorSettings.maxCurrent = 66;                                                    
+
+    if (motorSettings.v_int > 2047){
+        NRF_LOG_ERROR("Internal velocity of motor exceeds physical limmit. Decrease micro step settings and restart controller with new parameters!");
+        while(1){} // restart firmware to avoid damage on stepper motor
+    }
+    else if (motorSettings.v_int < 0){
+        NRF_LOG_ERROR("Internal velocity of motor less then zero. Restart controller with new parameters!");
+        while(1){} // restart firmware to avoid damage on stepper motor
+    }
+
+
     rxMotor.msgReceived = false;
     motorEnableLimitSwitches();
 
-    sendCmd(1,5,6,0,66);  /**< Set max current -max motor power- (0-255). */
+    sendCmd(1,5,6,0,motorSettings.maxCurrent);  /**< Set max current -max motor power- (0-255). */
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
     
-    sendCmd(1,5,7,0,0);  /**< Set standby current (0-255) * [4/255 A]. */
+    sendCmd(1,5,7,0,motorSettings.StandbyCurrent);  /**< Set standby current (0-255) * [4/255 A]. */
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
 
@@ -207,15 +232,21 @@ void motorInit(){
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
     
-    sendCmd(1,5,4,0,1024); /**< Set max positioning speed (integer) [1 - 2047]. */
+
+    /*Set motor speed parameters.*/
+    sendCmd(1,5,154,0,motorSettings.pulse_divisor); /**< Set pulse divisor to 1 - make sure to not exeed physical limits. */
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
 
-    sendCmd(1,5,2,0,1024); /**< Set max speed in velocity mode (integer) [1 - 2047]. */
+    sendCmd(1,5,140,0,motorSettings.microStepSettings);   /**< Set micro step to 2^n*/
+    while (!rxMotor.msgReceived);
+    rxMotor.msgReceived = false;
+
+    sendCmd(1,5,4,0,motorSettings.v_int);       /**< Set max positioning speed (integer) [1 - 2047]. */
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
 
-    sendCmd(1,5,154,0,1); /**< Set pulse divisor to 1 - make sure to not exeed physical limits. */
+    sendCmd(1,5,2,0,motorSettings.maxVelocity); /**< Set max speed in velocity mode (integer) [1 - 2047]. */
     while(!rxMotor.msgReceived);
     rxMotor.msgReceived = false;
   
@@ -256,22 +287,42 @@ rxMotor.msgReceived = false;
 
  void stopMotorAtSurface(){  
 
-    while(!bottomLimit);
-    bottomLimit = false;
+    while(!g_bottomLimit);
+    g_bottomLimit = false;
     motorStop();
-    motorStopped = true;
+    g_motorStopped = true;
 }
 /**@snippet [Stop motor at surface]*/
 
  void setSurfaceReferencePoint(){ 
     motorDown(); /**< To clear limit switch before re-trigger */
     nrf_delay_ms(1000);
-    bottomLimit = false;
+    g_bottomLimit = false;
     motorUp();
     stopMotorAtSurface();
     setReferencePositionToZero();
 }
 /**@snippet [Set Surface Reference Point]*/
+
+
+void testPositionMovement(float toPos){
+  mission.pidData.output = toPos;
+  float atPos;
+  atPos = getPistonPosition();
+  printf("pos1: %.2f\n", atPos);
+  setPistonPosition();
+  nrf_delay_ms(10000);
+  atPos = getPistonPosition();
+  printf("pos2: %.2f\n", atPos);
+  
+
+
+
+}
+
+
+
+/**@snippet [Set position velocity in mm/sec]*/
 
 
 /** @} */

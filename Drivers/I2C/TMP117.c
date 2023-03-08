@@ -38,12 +38,13 @@ void TMP117_init(void){
 
   uint16_t test = TMP117_read(TMP117_T_HIGH_LIMIT);
 
+  NRF_LOG_INFO("Finish initiating TMP117 sensor\n\r");
 }
 
 
 float TMP117_read_temp(){
   
-  uint16_t getValue = TMP117_read(TMP117_TEMP_RESULT); // Read temperature register 
+  uint16_t getValue = TMP117_read(TMP117_TEMP_RESULT); // Read temperature register //TODO change name
   float temp = getValue;                               //change data type to float
   temp = temp / TMP117Resolution;                      // Divide by resolution 
   return temp;

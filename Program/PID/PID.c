@@ -36,11 +36,11 @@ pid_t pid_create(pid_t pid, float* in, float* out, float* set, float kp, float k
 	pid->setpoint = set;
 	pid->automode = false;
 
-	pid_limits(pid, -1, 1);
+	//pid_limits(pid, -1, 1); Over written later to propper limits.
 
 
-	// Set default sample time to 100 ms
-	pid->sampletime = 100 * (TICK_SECOND / 1000);
+	// Set default sample time to 100 ms NEW 500ms
+	pid->sampletime = 500 * (TICK_SECOND / 1000);
 
 	pid_direction(pid, E_PID_DIRECT);
 	pid_tune(pid, kp, ki, kd);
@@ -69,7 +69,8 @@ void pid_compute(pid_t pid)
 
 	// Compute integral
 	pid->iterm += (pid->Ki * error);
-
+        
+        // Integral anti windup
 	if (pid->iterm > pid->omax)
 		pid->iterm = pid->omax;
 	else if (pid->iterm < pid->omin)
@@ -96,7 +97,8 @@ void pid_compute(pid_t pid)
           
 	// Keep track of some variables for next execution
 	pid->lastin = in;
-	pid->lasttime = app_timer_cnt_get();
+	pid->lasttime = app_timer_cnt_get(); // NOT BEING USED
+        printf("PID output: %.3f \t  kp: %.3f \t ki: %.5f \t kd: %.3f\n", mission.pidData.output, mission.pidDataOut.kp, mission.pidDataOut.ki, mission.pidDataOut.kd);
 }
 
 void pid_tune(pid_t pid, float kp, float ki, float kd)
@@ -107,6 +109,7 @@ void pid_tune(pid_t pid, float kp, float ki, float kd)
 	
 	//Compute sample time in seconds
 	float ssec = ((float) pid->sampletime) / ((float) TICK_SECOND);
+        printf("sample time in seconds: %.2f\n", ssec);
         
 	pid->Kp = kp;
 	pid->Ki = ki * ssec;
@@ -119,7 +122,7 @@ void pid_tune(pid_t pid, float kp, float ki, float kd)
 	}
 }
 
-void pid_sample(pid_t pid, uint32_t time)
+void pid_sample(pid_t pid, uint32_t time) // NOT BEING USED!!
 {
 	if (time > 0) {
 		float ratio = (float) (time * (TICK_SECOND / 1000)) / (float) pid->sampletime;
