@@ -63,7 +63,7 @@ void pid_compute(pid_t pid)
 		return false;
 
         float in = mission.MeasuredData.unfilteredDepth;
-        float inFiltered = mission.MeasuredData.filteredDepth; // filtered depth is used, as differential is sensitive to noise 
+        float inFiltered = mission.MeasuredData.filteredDepth; // filtered depth is used, as differential is sensitive to noise
 
 	// Compute error
 	float error = (*(pid->setpoint)) - in;
@@ -94,7 +94,7 @@ void pid_compute(pid_t pid)
         // Keep track of PID contributions.
         mission.pidDataOut.kp = pid->Kp*error;
         mission.pidDataOut.ki = pid->iterm;
-        mission.pidDataOut.kd = pid->Kd*dinput;
+        mission.pidDataOut.kd = - pid->Kd*dinput;
           
 	// Keep track of some variables for next execution
 	pid->lastin = inFiltered;

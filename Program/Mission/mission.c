@@ -64,17 +64,7 @@ void missionInit(){
    pid_manual(pid); // Disable PID controller
 
    disablePressureSensor();
-   // initiate EMA filter. Might be unnesesarrly, as pressure offset is initateted to zero??
-   //mission.MeasuredData.filteredDepth = mission.MeasuredData.pressureSensorOffset; INITIATED TO ZERO!!!
 
-    /*
-   if (mission.MeasuredData.pressureSensorOffset != NULL){
-      mission.MeasuredData.filteredDepth = mission.MeasuredData.pressureSensorOffset;
-   }
-   else{
-      mission.MeasuredData.pressureSensorOffset = 0;
-      mission.MeasuredData.filteredDepth = 0;
-   }*/
 }
 /**@snippet [Mission Init]*/
 
@@ -232,7 +222,7 @@ void CalcPressureAndDepth_v2(void){ // TODO rename.
   mission.MeasuredData.psi = ((mission.MeasuredData.pressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE));                /**< Unfiltered psi*/
   mission.MeasuredData.unfilteredDepth = mission.MeasuredData.psi*PSI_TO_MH2O  - mission.MeasuredData.pressureSensorOffset;                                                                /**< Unfiltered depth*/
   mission.MeasuredData.filteredDepth = (EMA_alpha*mission.MeasuredData.unfilteredDepth) + ((1-EMA_alpha)*mission.MeasuredData.filteredDepth); /**< EMA Filtered depth */
-  mission.MeasuredData.filteredDepth = mission.MeasuredData.filteredDepth;// + mission.MeasuredData.pressureSensorOffset;                        /**< Filtered depth corrected for sensor offset*/
+  //mission.MeasuredData.filteredDepth = mission.MeasuredData.filteredDepth;// + mission.MeasuredData.pressureSensorOffset;                        /**< Filtered depth corrected for sensor offset*/
   printf("pressure sensor voltage: %.2f", mission.MeasuredData.pressureVoltage);
 
   

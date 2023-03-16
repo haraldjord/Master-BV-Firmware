@@ -14,9 +14,9 @@
  * @brief Contain mission module with related structures and functions.
  */
 
-#define PID_kP 0.04               /**< Default Kp term*/
-#define PID_kI 0.0015             /**< Default Ki term*/
-#define PID_kD 0.05               /**< Default Kd term*/
+#define PID_kP 0.023  // 0.04               /**< Default Kp term*/
+#define PID_kI 0.0012 //0.0015             /**< Default Ki term*/
+#define PID_kD 0.008  //0.05               /**< Default Kd term*/
 #define PID_kI_THRESHOLD 1.0      /**< Default Ki threshold - When measured depth is further away than threshold Ki term is not part of pid calculation*/
 
 #define PID_LIMIT_MIN 0           /**<PID min limit = minimum piston position of 0.0 cm - End limit switches will stop motor at 0.0xx cm*/
@@ -42,9 +42,9 @@
 #define PRESSURE_VOLTAGE_RANGE 4.0 /**< Pressure sensor voltage output range.*/
 
 #define MAX_NR_OF_MISSIONS 4      /**< The maximum number of missions to be configured.*/
-#define DEFAULT_M1_DEPTH 1.5      /**< Default mission1 depth in meter */
+#define DEFAULT_M1_DEPTH 1.25      /**< Default mission1 depth in meter */
 #define DEFAULT_M1_TIME 180       /**< Default mission1 time in seconds */
-#define DEFAULT_M2_DEPTH 1.0      /**< Default mission2 depth in meter */
+#define DEFAULT_M2_DEPTH 0.8      /**< Default mission2 depth in meter */
 #define DEFAULT_M2_TIME 180       /**< Default mission1 depth in seconds */
 
 //#define EMA_alpha 0.1           /**< Exponential Moving Average 'alpha' Coefficient*/ //OBSOLETE as it's accessed through menue.

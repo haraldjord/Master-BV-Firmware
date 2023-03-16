@@ -1110,7 +1110,6 @@ void stopAdvertising(){
 /**@brief Function for application main entry.
  */
 int main(void){
-    printf("Hello");
     pwm_init(); /**< Initialize PWM before anything else to avoid the LED on full strength when uninitialized.*/
     float motorSpeed = 1;/**< variable to measure motor speed while returning to lower limit switch*/
     
@@ -1144,7 +1143,6 @@ int main(void){
 
     SDcardInit();
     //TWIMInit(); // OBSOLETE
-    printf("Initiating motor now.\n");
     motorInit();  // Initialize Motor TODO: commented out when testing icm module.
     
     missionInit();  // Initialize Mission
@@ -1154,18 +1152,10 @@ int main(void){
     twi_init();
     init_imu();
     TMP117_init();
-
-/*    enablePressureSensor();
-    while(1){ // test mock mission
-
-      CalcPressureAndDepth_v2();
-      float temp = TMP117_read_temp();
-      read_accel_data();
-      read_gyro_data();
-      printf("Temperature: %.4f\n", temp);
-
-      nrf_delay_ms(2000);
-      
+    
+/*
+    while(1){
+      motorDown(); 
     }*/
 
 
@@ -1175,7 +1165,7 @@ int main(void){
     {
 
          
-      /*if (initHall == 10){
+     /* if (initHall == 10){
         fsm.hallEffectButton = true;
         hallCountStop = true;
         initHall = 100;
@@ -1196,7 +1186,7 @@ int main(void){
 
       if(g_sendNUS){  /**< Call NUS data transmission by setting flag: sendNUS*/
         g_sendNUS = false;
-        NRF_LOG_ERROR("currentMenu: %d",currentMenu);
+        NRF_LOG_INFO("currentMenu: %d",currentMenu);
         switch(currentMenu){
           case MAINMENU: printMainMenu(); break;
           case MISSIONDATA: printMissionDataMenu(); break;
@@ -1206,7 +1196,7 @@ int main(void){
           case TRANSFER_ONE_FILE: TransferOneFile(); break;
           case DELETE_ALL_FILES: deleteAllFiles(); break;
           case DELETE_ONE_FILE: deleteFile(); break;
-          default: NRF_LOG_INFO("Unknown send menu: %d",currentMenu);
+          default: NRF_LOG_ERROR("Unknown send menu: %d",currentMenu);
           }
       }
 
