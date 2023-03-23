@@ -24,19 +24,20 @@ enum fileoption { TRANSFER_ALL, TRANSFER_ONE, DELETE_ALL, DELETE_ONE };
 
 /** @brief configurable values enumerated.
 */
-enum config { M1DEPTH,      /**< Mission 1 depth*/
-              M1TIME,       /**< Mission 1 time*/
-              M2DEPTH,      /**< Mission 2 depth*/
-              M2TIME,       /**< Mission 2 time*/
-              M3DEPTH,      /**< Mission 3 depth*/
-              M3TIME,       /**< Mission 3 time*/
-              M4DEPTH,      /**< Mission 4 depth*/
-              M4TIME,       /**< Mission 4 time*/
-              PID_P,        /**< Kp coefficient*/
-              PID_I,        /**< Ki coefficient*/
-              PID_D,        /**< Kd coefficient*/
-              THRESHOLD,    /**< Ki threshold*/
-              ATM_PRESSURE  /**< Atmospheric pressure*/
+enum config { M1DEPTH,        /**< Mission 1 depth*/
+              M1TIME,         /**< Mission 1 time*/
+              M2DEPTH,        /**< Mission 2 depth*/
+              M2TIME,         /**< Mission 2 time*/
+              M3DEPTH,        /**< Mission 3 depth*/
+              M3TIME,         /**< Mission 3 time*/
+              M4DEPTH,        /**< Mission 4 depth*/
+              M4TIME,         /**< Mission 4 time*/
+              PID_P,          /**< Kp coefficient*/
+              PID_I,          /**< Ki coefficient*/
+              PID_D,          /**< Kd coefficient*/
+              THRESHOLD,      /**< Ki threshold*/
+              ATM_PRESSURE,   /**< Atmospheric pressure*/
+              EMA_ALPHA_VALUE /**< EMA filter coefficient*/
             };
 
 

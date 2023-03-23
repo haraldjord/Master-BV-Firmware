@@ -143,9 +143,15 @@ uint32_t findLatestMissionLog(){
 
 void createMissionLog()
 {  
-    uint32_t bytes_written;
-    char text[] = "Time[ms],#Mission,TargetDepth[m],PistonPosition[m],PIDoutput,Pressure[V],MeasuredDepth[m],Psi,Pascal,Battery[V],Temperature,MotionData\r\n";
+    uint32_t bytes_written, n= 0;
+    char configurationInfo[200];
+    //n += sprintf(&buffer[n],"%.2f,",missionLog.timeStamp);
+    sprintf(&configurationInfo, "Vehicle settings: pid_kp = %.5f \t pid_ki = %.5f \t pid_kd = %.5f \t integralTreshold = %.3f \t pressure sensor offset = %.3f\t EMA_alpha = %.2f\r\n",mission.pidData.kp, mission.pidData.ki, mission.pidData.kd, mission.pidData.kiThreshold, mission.MeasuredData.pressureSensorOffset, EMA_alpha);  
 
+    //char text[] = "Time[ms],#Mission,TargetDepth[m],PistonPosition[m],PIDoutput,Pressure[V],MeasuredDepth[m],Psi,Pascal,Battery[V],Temperature,MotionData\r\n";
+    char text[] = "Time[ms],#Mission,TargetDepth[m],PistonPosition[m],PIDoutput,Pterm,Iterm,Dterm,Pressure[V],psi,unfilterDepth[m],filteredDepth[m],Battery[V],Temperature,MotionData\r\n";
+    //char text[] = "Time[ms],#missionNr,TargetDepth,PistonPosition,PIDoutput,Pterm,Iterm,Dterm,pressureVoltage,psi,unfilteredDepth,filteredDepth,BatteryVoltage,TEMP117temperature,accel_x,accel_y,accel_z,accel_sensitivity,gyro_x,gyro_y,gyro_z,gyro_sensitivity\r\n";
+    
     openMissionLogDirectory();                             /**<Open missionLog directory */
     uint32_t name = findLatestMissionLog();               /**<and count the number of Log files.*/
     name++;
@@ -162,9 +168,15 @@ void createMissionLog()
       NRF_LOG_ERROR("Create missionLog, f_open error: %x",f_err_code);
       return;
   }
-  f_err_code = f_write(&file, text, sizeof(text)-1, &bytes_written);
+  f_err_code = f_write(&file, configurationInfo, sizeof(configurationInfo)-1, &bytes_written); // write configuration info
   if (f_err_code != FR_OK){ NRF_LOG_INFO("Write failed\r\n.");  }
   else{ NRF_LOG_INFO("bytes written %d.",bytes_written); }
+
+  f_err_code = f_write(&file, text, sizeof(text)-1, &bytes_written); // write mission log info 
+  if (f_err_code != FR_OK){ NRF_LOG_INFO("Write failed\r\n.");  }
+  else{ NRF_LOG_INFO("bytes written %d.",bytes_written); }
+
+  // write mission 
 }
 /**@snippet [Create log file]*/
 
@@ -315,8 +327,10 @@ void unMount(){
 }
 /**@snippet [Unmount SD card]*/
 
-
-
+/*
+void writeMissionInfo(){
+}
+*/
 void writeMissionLog(){
   uint32_t bytes_written, n = 0;
   uint8_t buffer[3000] = {0};

@@ -62,7 +62,8 @@ void pid_compute(pid_t pid)
 	if (!pid->automode)
 		return false;
 
-        float in = mission.MeasuredData.filteredDepth;
+        float in = mission.MeasuredData.unfilteredDepth;
+        float inFiltered = mission.MeasuredData.filteredDepth; // filtered depth is used, as differential is sensitive to noise
 
 	// Compute error
 	float error = (*(pid->setpoint)) - in;
@@ -77,7 +78,7 @@ void pid_compute(pid_t pid)
 		pid->iterm = pid->omin;
 
 	// Compute differential on input
-	float dinput = in - pid->lastin;
+	float dinput = inFiltered - pid->lastin;
 	// Compute PID output
 	float out = pid->Kp * error + pid->iterm - pid->Kd * dinput;
 
@@ -93,10 +94,10 @@ void pid_compute(pid_t pid)
         // Keep track of PID contributions.
         mission.pidDataOut.kp = pid->Kp*error;
         mission.pidDataOut.ki = pid->iterm;
-        mission.pidDataOut.kd = pid->Kd*dinput;
+        mission.pidDataOut.kd = - pid->Kd*dinput;
           
 	// Keep track of some variables for next execution
-	pid->lastin = in;
+	pid->lastin = inFiltered;
 	pid->lasttime = app_timer_cnt_get(); // NOT BEING USED
         printf("PID output: %.3f \t  kp: %.3f \t ki: %.5f \t kd: %.3f\n", mission.pidData.output, mission.pidDataOut.kp, mission.pidDataOut.ki, mission.pidDataOut.kd);
 }
