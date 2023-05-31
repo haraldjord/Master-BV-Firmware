@@ -1,3 +1,8 @@
+/*
+  Created: spring 2023
+    Author: Jordalen 
+*/
+
 
 #include "TMP117.h"
 
@@ -39,7 +44,7 @@ void TMP117_init(void){
   uint16_t test = TMP117_read(TMP117_T_HIGH_LIMIT);
 
   NRF_LOG_INFO("Finish initiating TMP117 sensor\n\r");
-}
+}/** @snippet [Initialize TMP117]*/
 
 
 float TMP117_read_temp(){
@@ -48,5 +53,5 @@ float TMP117_read_temp(){
   float temp = getValue;                               //change data type to float
   temp = temp / TMP117Resolution;                      // Divide by resolution 
   return temp;
-}
+}/** @snippet [Read temperature]*/
 

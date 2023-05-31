@@ -1,9 +1,17 @@
+/*
+  Created: spring 2020
+    Author: Halsos
+
+  Edited: spring 2023 
+    Author: Jordalen
+*/
+
 #ifndef _MISSION_H_
 #define _MISSION_H_
 
 #include "main.h"
 #include "timers.h"
-#include "i2c.h"
+#include "icm.h"
 
 /** @file
  *
@@ -14,13 +22,13 @@
  * @brief Contain mission module with related structures and functions.
  */
 
-#define PID_kP 0.023  // 0.04               /**< Default Kp term*/
-#define PID_kI 0.0012 //0.0015             /**< Default Ki term*/
-#define PID_kD 0.008  //0.05               /**< Default Kd term*/
-#define PID_kI_THRESHOLD 1.0      /**< Default Ki threshold - When measured depth is further away than threshold Ki term is not part of pid calculation*/
+#define PID_kP 0.026              /**< Default Kp term*/
+#define PID_kI 0.001              /**< Default Ki term*/
+#define PID_kD 0.1                /**< Default Kd term*/
+#define PID_kI_THRESHOLD 10.0      /**< Default Ki threshold - When measured depth is further away than threshold Ki term is not part of pid calculation*/
 
 #define PID_LIMIT_MIN 0           /**<PID min limit = minimum piston position of 0.0 cm - End limit switches will stop motor at 0.0xx cm*/
-#define PID_LIMIT_MAX 0.055       /**<PID max limit = maximum piston position of 5.5 cm - End limit switches will stop motor at 5.1xx cm*/
+#define PID_LIMIT_MAX 0.052       /**<PID max limit = maximum piston position of 5.5 cm - End limit switches will stop motor at 5.1xx cm*/
 
 #define MAX_DEPTH 50.0            /**< Maximum allowable depth [m]*/
 #define MIN_DEPTH 0.0             /**< minimum allowable depth [m]*/
@@ -46,18 +54,6 @@
 #define DEFAULT_M1_TIME 180       /**< Default mission1 time in seconds */
 #define DEFAULT_M2_DEPTH 0.8      /**< Default mission2 depth in meter */
 #define DEFAULT_M2_TIME 180       /**< Default mission1 depth in seconds */
-
-//#define EMA_alpha 0.1           /**< Exponential Moving Average 'alpha' Coefficient*/ //OBSOLETE as it's accessed through menue.
-
-
-//extern bool motorStopped;         /**< Flag to signal motor stopped*/
-//extern bool bottomLimit;          /**< Flag to signal when bottom limit switch is reached             */
-//extern bool SAADCdataReady = false;      /**< Flag to signal SAADC data is ready to be read and calculated, and to run PID*/
-//extern bool sampleSensorData = false;    /**< Flag to signal sampling battery, pressure, and TMP117*/
-//extern bool sampleIMUdata = false;       /**< Flag to signal sampling data from IMU (icm chip)*/
-//extern bool missionLogUpdated = false;   /**< Flag to signal mission log is updated*/
-//bool TMP117dataReady = false;     /**< Flag to signal TMP117 data is ready to be read*/
-//bool receiveTMP117 = false;       /**< Flag to signal that data is expected to be received from TMP117*/
 
 
 
@@ -93,8 +89,6 @@ typedef struct
    float pressure;              /**< raw pressure sensor value from SAAADC*/
    float pressureVoltage;       /**< Pressure value in volts*/
    float psi;                   /**< Pressure value measured in psi*/
-   //float pascal;            // OBSOLETE!        /**< Pressure value measured in pascal*/
-   //float measuredDepth;     //OBSOLETE!!        /**< Pressure value measured in depth relative to water surface*/
    float unfilteredDepth;       /**< unfiltered depth */
    float filteredDepth;         /**< filtered depth */
    float outside_temperature;   /**< Temperature measured by TMP117, attached to pressure housing to measure water temperature*/
@@ -158,14 +152,13 @@ typedef struct{
   float pistonPosition;   /**< current piston position*/
   pidDataOut_t pidDataOut;        /**< Last calculated PID output*/
   float pressureVoltage;  /**< Pressure measured in volts*/
-  //float pressureDepth; //OBSOLETE   /**< Pressure measured in meter with respect to surface*/
   float filteredDepth;
   float unfilteredDepth;
   float pressurePsi;      /**< Pressure measured in psi*/
   float pressurePascal;   /**< Pressure measured in pascal*/
   float batteryVoltage;   /**< Battery measured in volts*/
-  float temperature;      /**< Water temperature measured by TMP117 temperature sensor - Currently not configured*/
-  motionData_t motionData;/**< 9-axis motion data measured by ICM20948 motion sensor, each axis consist of 5 measurments*/
+  float temperature;      /**< Water temperature measured by TMP117 temperature sensor*/
+  motionData_t motionData;/**< 9-axis motion data measured by ICM20948 motion sensor*/
   logFile_t file;         /**< Log file information*/
 }missionLog_t;
 
@@ -196,7 +189,7 @@ void runMission(void);
 /**@brief Calculate pressure and current depth based on raw pressure from SAADC.        
 */
 void CalcPressureAndDepth(void);
-void CalcPressureAndDepth_v2(void);
+
 
 /**@brief Initialize mission log by setting the structure to zero.
 */

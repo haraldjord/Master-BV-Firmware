@@ -1,10 +1,16 @@
+/*
+  Created: spring 2020
+    Author: Halsos
+
+  Edited: spring 2023 
+    Author: Jordalen
+*/
+
+
 #include "menu.h"
 
 extern enum menu currentMenu;
 enum config configVariable;
-//extern bool getValue;
-//extern bool transferDataFlag;
-//extern bool sendNUS;
 enum fileoption fileOption;
 
 extern missionLog_t missionLog;
@@ -100,12 +106,7 @@ void setConfigValue(char * value)
       g_sendNUS = true;
      break;
    
-    case ATM_PRESSURE:
-      floatValue = atof(value);
-      mission.pidData.atmosphericPressure = floatValue;
-      g_sendNUS = true;
-      break;
-    
+
     case EMA_ALPHA_VALUE:
       floatValue = atof(value);
       EMA_alpha = floatValue;
@@ -315,7 +316,7 @@ void configVehicleMenu(int option)
       configVariable = THRESHOLD;
      break;
 
-   case 5:
+/*   case 5:
       NRF_LOG_INFO("Option 5\n");
       uint8_t atmosphericPressure_msg[] = "Type in current atmospheric pressure (psi) - x.x (float) - :";
       msgLength = sizeof(atmosphericPressure_msg);
@@ -323,9 +324,9 @@ void configVehicleMenu(int option)
       g_getValue = true;
       configVariable = ATM_PRESSURE;
      break;
-
-   case 6:
-      NRF_LOG_INFO("Option 6\n");
+*/
+   case 5:
+      NRF_LOG_INFO("Option 5\n");
       uint8_t EMA_alpha_msg[] = "Type in alpha value for EMA filter - x.x (float) - :";
       msgLength = sizeof(EMA_alpha_msg);
       nus_send(EMA_alpha_msg, msgLength);
@@ -484,7 +485,7 @@ void printConfigVehicleMenu(){
 
     len0 = sprintf(data0, "*****-- Configure Vehicle -- *****\r#Number\tOption\tValue\r#1\tP\t\t%.6f\r", mission.pidData.kp);
     len1 = sprintf(data1, "#2\tI\t\t%.6f\r#3\tD\t\t%.6f\r#4\tKi Threshold\t%.6f\r", mission.pidData.ki,mission.pidData.kd,mission.pidData.kiThreshold);
-    len2 = sprintf(data2, "#5\tAtmospheric Pressure\t%.6f\r#6\tEMA filter alpha%.3f\r#9\tMainMenu", mission.pidData.atmosphericPressure, EMA_alpha);
+    len2 = sprintf(data2, "#5\tEMA filter alpha %.3f\r#9\tMainMenu", EMA_alpha);
 
    nus_send(data0, len0);
    nus_send(data1, len1);

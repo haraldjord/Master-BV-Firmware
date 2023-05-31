@@ -1,3 +1,10 @@
+/*
+  Created: spring 2020
+    Author: Halsos
+
+  Edited: spring 2023 
+    Author: Jordalen
+*/
 
 #include"mission.h"
 
@@ -10,15 +17,7 @@
  * @brief Contain mission module with related structures and functions.
  */
 
-//extern bool motorStopped;         /**< Flag to signal motor stopped*/
-//extern bool bottomLimit;          /**< Flag to signal when bottom limit switch is reached             */
-//bool SAADCdataReady = false;      /**< Flag to signal SAADC data is ready to be read and calculated, and to run PID*/
-//bool sampleSensorData = false;    /**< Flag to signal sampling battery, pressure, and TMP117*/
-//bool sampleIMUdata = false;       /**< Flag to signal sampling data from IMU (icm chip)*/
-//bool missionLogUpdated = false;   /**< Flag to signal mission log is updated*/
-//bool TMP117dataReady = false;     /**< Flag to signal TMP117 data is ready to be read*/
-//bool receiveTMP117 = false;       /**< Flag to signal that data is expected to be received from TMP117*/
-//float EMA_state = 0.0;         //OBSOLETE   /**< global filter output variable */    
+
 missionLog_t missionLog;          /**< Create mission log instance*/
 struct pid_controller ctrlData;   /**< Create PID controller control data instance*/
 pid_t pid;                        /**< Create PID controller instnace*/
@@ -54,7 +53,6 @@ void missionInit(){
    mission.pidData.ki = PID_kI;
    mission.pidData.kd = PID_kD;
    mission.pidData.kiThreshold = PID_kI_THRESHOLD;
-   mission.pidData.atmosphericPressure = PSI_1ATM_PRESSURE;
 
    mission.running = false;
 
@@ -65,8 +63,7 @@ void missionInit(){
 
    disablePressureSensor();
 
-}
-/**@snippet [Mission Init]*/
+}/**@snippet [Mission Init]*/
 
 
 
@@ -90,11 +87,18 @@ void prepareMission(){
   createMissionLog(); // Create new missionLog file
 
   stopBatteryMeasureTimer();
-
+  // mission related flag to false to avoid unexpected behavior
   g_SAADCdataReady = false;
   g_sampleSensorData = false;
-}
-/**@snippet [Prepare mission]*/
+  g_missionLogUpdated = false;
+  // PID related values
+  pid->iterm = 0;
+  pid->lastin = 0;  
+  mission.MeasuredData.filteredDepth = 0.001;
+  mission.MeasuredData.unfilteredDepth = 0.001;
+
+
+}/**@snippet [Prepare mission]*/
 
 
 void runMission(){
@@ -129,49 +133,46 @@ void runMission(){
             read_gyro_data();
            }
 
-           if(g_SAADCdataReady){
-              g_SAADCdataReady = false;
-              CalcPressureAndDepth_v2();
-              if( fabs(mission.currentMission.depth - mission.MeasuredData.filteredDepth) > mission.pidData.kiThreshold ) /**< If x meters away from target, run as PD regulator, otherwise run as PID regulator. This is so that it regulates quicker towards target */
-                pid_tune(pid, mission.pidData.kp, 0, mission.pidData.kd);
-              else
-                pid_tune(pid, mission.pidData.kp, mission.pidData.ki, mission.pidData.kd);
-              
-              mission.pidData.pistonPosition = getPistonPosition();
-              
-              pid_compute(pid);
-              timeStamp = app_timer_cnt_get();
-              if(timeStamp >= oldTimestamp)      /**<Check for and handle RTC wrap around*/
-                elapsedTime = timeStamp - oldTimestamp;
-              else
-                elapsedTime = timeStamp+RTC_MAX_COUNT - oldTimestamp;
-              
-              mission.timeStamp += (float)elapsedTime/32.768; // Elapsed time in milliseconds [32.768 KHz LF clock frequency]
-              oldTimestamp = timeStamp;
-              
-              setPistonPosition();
-                
-            }
+          if(g_SAADCdataReady){
+            g_SAADCdataReady = false;
+            CalcPressureAndDepth();
+            if( fabs(mission.currentMission.depth - mission.MeasuredData.unfilteredDepth) > mission.pidData.kiThreshold ) /**< If x meters away from target, run as PD regulator, otherwise run as PID regulator. This is so that it regulates quicker towards target */
+              pid_tune(pid, mission.pidData.kp, 0, mission.pidData.kd);
+            else
+              pid_tune(pid, mission.pidData.kp, mission.pidData.ki, mission.pidData.kd);
+            
+            mission.pidData.pistonPosition = getPistonPosition();
+            
+            pid_compute(pid);
+            timeStamp = app_timer_cnt_get();
+            if(timeStamp >= oldTimestamp)      /**<Check for and handle RTC wrap around*/
+              elapsedTime = timeStamp - oldTimestamp;
+            else
+              elapsedTime = timeStamp+RTC_MAX_COUNT - oldTimestamp;
+            
+            mission.timeStamp += (float)elapsedTime/32.768; // Elapsed time in milliseconds [32.768 KHz LF clock frequency]
+            oldTimestamp = timeStamp;
+            
+            setPistonPosition();  
+         }
 
 
-        // If low Battery, abort mission and go to low power state.
-        if(mission.MeasuredData.battery <= LOW_POWER_THRESHOLD){
-          stopMissiontimer();
-          stopSampleSensorDatatimer();
-          stopUpdateMissionLogTimer();
-          closeFile();
-          LOWPOWERstate();
-        }
+          // If low Battery, abort mission and go to low power state.
+          if(mission.MeasuredData.battery <= LOW_POWER_THRESHOLD){
+            stopMissiontimer();
+            stopSampleSensorDatatimer();
+            stopUpdateMissionLogTimer();
+            closeFile();
+            LOWPOWERstate();
+          }
 
-        
-
-        __WFE();
-        /*
-        if(fsm.hallEffectButton){
-          fsm.hallEffectButton = false;
-          i = mission.nrOfMissions;
-          mission.missionFinished = mission.nrOfMissions;
-         }*/ // hallEffect not working properly... 
+          __WFE(); // wait for event
+      
+          if(fsm.hallEffectButton){
+            fsm.hallEffectButton = false;
+            i = mission.nrOfMissions;
+            mission.missionFinished = mission.nrOfMissions;
+           } 
       }
 
      stopMissiontimer();
@@ -195,39 +196,17 @@ void runMission(){
 
 
 
-// OBSOLETE
-//void CalcPressureAndDepth(void)
-//{
-//   EMA_state = (EMA_alpha*mission.MeasuredData.pressure) + ((1-EMA_alpha)*EMA_state); /**< Exponential Moving Average (EMA) filtering on RAW pressure voltage*/
-//   mission.MeasuredData.batteryVoltage = ((mission.MeasuredData.battery/16383.0)*24.0)+SAADC_VOLTAGE_ERROR;
-//   mission.MeasuredData.pressureVoltage = ((EMA_state/16383)*(9.0/2.0))+SAADC_VOLTAGE_ERROR;
-//   mission.MeasuredData.psi = ((mission.MeasuredData.pressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE)-(mission.pidData.atmosphericPressure-PSI_1ATM_PRESSURE));
-//   mission.MeasuredData.pascal = mission.MeasuredData.psi*PSI_TO_PASCAL;
-//   mission.MeasuredData.measuredDepth = ((mission.MeasuredData.psi)*PSI_TO_MH2O + mission.MeasuredData.pressureSensorOffset); // correct for offset before EMA filter calculation?
-   //printf("-------------------------------------\n\r");
-   //printf("Voltage: %f\n\r",mission.MeasuredData.pressureVoltage);
-   //printf("psi: %f\n\r",mission.MeasuredData.psi);
-   //printf("pascal: %f\n\r",mission.MeasuredData.pascal);
-   //printf("RAWpressure: %f\n\r",mission.MeasuredData.pressure);
-   //printf("EMA_STATEpressure: %f\n\r",EMA_state);
-   //printf("pressureVoltage: %f\n\r",mission.MeasuredData.pressureVoltage);
-   //printf("MeasuredDepth in meters: %f\n\r",mission.MeasuredData.measuredDepth);
-   //printf("-------------------------------------\n\r");
-//}
-/**@snippet [Calculate Pressure and Depth]*/
 
-void CalcPressureAndDepth_v2(void){ // TODO rename.
+
+
+void CalcPressureAndDepth(void){ 
   mission.MeasuredData.batteryVoltage = ((mission.MeasuredData.battery/16383.0)*24.0)+SAADC_VOLTAGE_ERROR;                                    /**< Battery voltage measured>*/
-  mission.MeasuredData.pressureVoltage =  ((mission.MeasuredData.pressure/16383.0)*4.5) + SAADC_VOLTAGE_ERROR;                                  /**< Raw pressure voltage voltage>*/
+  mission.MeasuredData.pressureVoltage =  ((mission.MeasuredData.pressure/16383.0)*4.5) + SAADC_VOLTAGE_ERROR;                                /**< Raw pressure voltage voltage>*/
   mission.MeasuredData.psi = ((mission.MeasuredData.pressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE));                /**< Unfiltered psi*/
-  mission.MeasuredData.unfilteredDepth = mission.MeasuredData.psi*PSI_TO_MH2O  - mission.MeasuredData.pressureSensorOffset;                                                                /**< Unfiltered depth*/
+  mission.MeasuredData.unfilteredDepth = mission.MeasuredData.psi*PSI_TO_MH2O  - mission.MeasuredData.pressureSensorOffset;                   /**< Unfiltered depth*/
   mission.MeasuredData.filteredDepth = (EMA_alpha*mission.MeasuredData.unfilteredDepth) + ((1-EMA_alpha)*mission.MeasuredData.filteredDepth); /**< EMA Filtered depth */
-  //mission.MeasuredData.filteredDepth = mission.MeasuredData.filteredDepth;// + mission.MeasuredData.pressureSensorOffset;                        /**< Filtered depth corrected for sensor offset*/
-  printf("pressure sensor voltage: %.2f", mission.MeasuredData.pressureVoltage);
-
-  
-}
-/**@snittep [calculate Pressure and Depth] included depth offset.*/
+  //printf("pressure sensor voltage: %.2f", mission.MeasuredData.pressureVoltage);  
+}/**@snippet [Calculate Pressure and Depth]*/
 
 
 void missionLogInit(){
@@ -253,7 +232,6 @@ void updateMissionLog(){
      missionLog.pidDataOut.ki           = mission.pidDataOut.ki;
      missionLog.pidDataOut.kd           = mission.pidDataOut.kd;
      missionLog.pressureVoltage         = mission.MeasuredData.pressureVoltage;
-     // missionLog.pressureDepth        = mission.MeasuredData.measuredDepth; OBSOLETE
      missionLog.pressurePsi             = mission.MeasuredData.psi;
      missionLog.unfilteredDepth         = mission.MeasuredData.unfilteredDepth;
      missionLog.filteredDepth           = mission.MeasuredData.filteredDepth;

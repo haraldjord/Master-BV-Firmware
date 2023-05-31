@@ -38,7 +38,13 @@
  *
  */
 
+/*
+  Created: spring 2020
+    Author: Halsos
 
+  Edited: spring 2023 
+    Author: Jordalen
+*/
 
 #include "main.h"
 #include "FSM.h"
@@ -87,7 +93,7 @@ enum menu currentMenu;          /**< Create menu enumeration instance to keep tr
 */
 void hallEffectInterrupt_handler(void){
 
-  NRF_LOG_ERROR("HallEffect_Interrupt_HANDLER");
+  NRF_LOG_INFO("HallEffect_Interrupt_HANDLER");
   fsm.hallEffectButton = true;                        /**< Notify FSM that hall effect interrupt has occured*/
 }
 
@@ -120,9 +126,7 @@ void limitSwitchTop_handler(void){
 *       and firmware is not yet written to do anything on temperature alert interrupt.
 */
 void TMP_temp_Alert_Interrupt_handler(void){
-
   NRF_LOG_INFO("TMP117_ALERT_Interrupt_HANDLER");
-  
 }
 
 /**@brief ICM20948 Motion Sensor Interrupt handler.
@@ -131,10 +135,7 @@ void TMP_temp_Alert_Interrupt_handler(void){
 * and firmware is not yet written to do anything on motion sensor interrupt.
 */
 void motionSensorInterrupt_handler(void){
-
   NRF_LOG_INFO("MotionSensor_Interrupt_HANDLER");
-
-
 }
 
 
@@ -1055,7 +1056,7 @@ void stopAdvertising(){
   uint8_t LED_Status = 2; // 2 --> initiate LED
   enablePressureSensor();
   startSampleSensorDatatimer();
-  while(!finnishCalibrating){ // calibrate pressure sensor tryout:
+  while(!finnishCalibrating){ // calibrate pressure sensor
 /*
     if (!initiated){
     printf("Depth sum: %f\n\r", DEPTH_sum);
@@ -1071,7 +1072,7 @@ void stopAdvertising(){
 
         LED_Status = blinkLED(1,1,1, LED_Status);
 
-        PSI = ((PressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE)-(mission.pidData.atmosphericPressure-PSI_1ATM_PRESSURE));
+        PSI = ((PressureVoltage-PRESSURE_VOLTAGE_MIN)*(PSI_RANGE/PRESSURE_VOLTAGE_RANGE));
         //printf("PSI value: %f\n\r", PSI);
         DEPTH = PSI*PSI_TO_MH2O;
         if (DEPTH>40) /*Somehow the first measuement give 60 meters depth, which is dominant in the average calculation.*/
@@ -1083,7 +1084,7 @@ void stopAdvertising(){
         if (n_measurement >= 50) //make x measurements befor calculating average value
             readyToCalibrate = true;
       
-        printf("Meassured depth: %f\n\r", DEPTH);
+        //printf("Meassured depth: %f\n\r", DEPTH);
       }
    
     if(g_readPressureSensor){ // true by timer, every 0.5 seconds 
@@ -1111,7 +1112,6 @@ void stopAdvertising(){
  */
 int main(void){
     pwm_init(); /**< Initialize PWM before anything else to avoid the LED on full strength when uninitialized.*/
-    float motorSpeed = 1;/**< variable to measure motor speed while returning to lower limit switch*/
     
     bool erase_bonds;
     uint32_t err_code;
@@ -1142,8 +1142,7 @@ int main(void){
     motorEnableLimitSwitches(); /**< Enable limit switches as soon as possible to make sure they are enabled when motor is running*/
 
     SDcardInit();
-    //TWIMInit(); // OBSOLETE
-    motorInit();  // Initialize Motor TODO: commented out when testing icm module.
+    motorInit();  // Initialize Motor .
     
     missionInit();  // Initialize Mission
 

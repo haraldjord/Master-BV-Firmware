@@ -17,6 +17,12 @@
 	Author website: http://www.geekfactory.mx
 	Author e-mail: ruben at geekfactory dot mx
  */
+
+
+ /*
+  Edited: spring 2023 
+    Author: Jordalen
+*/
 #include "PID.h"
 extern mission_t mission;
 
@@ -39,7 +45,7 @@ pid_t pid_create(pid_t pid, float* in, float* out, float* set, float kp, float k
 	//pid_limits(pid, -1, 1); Over written later to propper limits.
 
 
-	// Set default sample time to 100 ms NEW 500ms
+	// Set default sample time to 500 ms
 	pid->sampletime = 500 * (TICK_SECOND / 1000);
 
 	pid_direction(pid, E_PID_DIRECT);

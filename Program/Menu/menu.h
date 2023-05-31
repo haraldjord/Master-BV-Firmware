@@ -36,7 +36,6 @@ enum config { M1DEPTH,        /**< Mission 1 depth*/
               PID_I,          /**< Ki coefficient*/
               PID_D,          /**< Kd coefficient*/
               THRESHOLD,      /**< Ki threshold*/
-              ATM_PRESSURE,   /**< Atmospheric pressure*/
               EMA_ALPHA_VALUE /**< EMA filter coefficient*/
             };
 

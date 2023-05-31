@@ -26,9 +26,8 @@
 #include "menu.h"
 
 
-#include "TWIM_v2.h"
-//#include "ICM.h"
-#include "i2c.h"
+#include "TWIM.h"
+#include "icm.h"
 #include "TMP117.h"
 #include "mission.h"
 #include "mockMission.h"
