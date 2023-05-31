@@ -1,3 +1,10 @@
+/*
+  Created: spring 2020
+    Author: Halsos
+
+  Edited: spring 2023 
+    Author: Jordalen
+*/
 
 #include "timers.h"
 #include "FSM.h"

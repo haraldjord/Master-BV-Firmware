@@ -1,13 +1,18 @@
+/*
+  Created: spring 2023
+    Author: Jordalen 
+*/
+
 #ifndef _TMP117_H
 #define _TMP117_H
 
 
 #include <stdio.h>
 #include "app_error.h"
-#include "TWIM_v2.h"
+#include "TWIM.h"
 #include "main.h"
 
-/*Address of the registers. See page 23 of datasheet*/
+/*Address of registers. See page 23 of datasheet*/
 enum TMP117_Register
 {
   TMP117_TEMP_RESULT = 0X00,
@@ -22,15 +27,16 @@ enum TMP117_Register
   TMP117_DEVICE_ID = 0X0F
 };
 
-
+/**@brief Initate TMP117 module
+*/
 void TMP117_init(void);
 
 
+/**@brief Get temperature from TMP117 module
+*
+* @param[out] Temperature 
+*/
 float TMP117_read_temp(void);
-
-
-
-
 
 
 #endif

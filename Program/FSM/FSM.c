@@ -58,13 +58,7 @@ systemState_t MissionFinishedHandler(void){
     return PICKUP; /**< Go to PICKUP state.*/
 }
 
-/*
-/**@Brief handler to calibrate pressure sensor*/
-/*systemState_t calibratePressureSensor(void){
-    NRF_LOG_INFO("calibrate pressure sensor. Go to state calibrate");
-    return CALIBRATEPRESSURESENSOR;
 
-}*/
 
 /**@brief handler to go to failure state upon aborted mission.
 *
@@ -217,12 +211,16 @@ NRF_LOG_INFO("CONFIGURE state");
         else if(fsm.calibratePressureSensor){
           fsm.calibratePressureSensor = false;
           printStartCalibratePressureSensorMSG();
+          nrf_delay_ms(1000*10);
           calibratePressureSensor();
           printFinishedCalibratePressureSensorMSG();
           stopLED();
 
           fsm.nextState = ConfigureStateHandler();
-          fsm.stateInitialized = false;
+          //fsm.stateInitialized = false;
+          updateLED(0,0,1); /**< blue LED.*/
+          startLED();
+          
         }
         else
           fsm.nextState = fsm.state;

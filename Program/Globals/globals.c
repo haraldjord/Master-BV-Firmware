@@ -1,9 +1,20 @@
 #include "globals.h"
+/*
+  Created: spring 2023
+    Author: Jordalen 
+*/
 
+
+/** @file
+ *
+ * @defgroup global variables file
+ * @{
+ * @ingroup Drivers
+ *
+ * @brief Contain global variables.
+ */
 
 // global variables are indicated by g_name
-
-
 //global flags:
 bool g_testbool = true;
 
@@ -15,7 +26,7 @@ bool g_sampleSensorData = false;
 bool g_sampleIMUdata = false;       
 bool g_missionLogUpdated = false;  
 bool g_TMP117dataReady = false;     
-bool g_receiveTMP117 = false; // OBSOLETE??
+//bool g_receiveTMP117 = false; // OBSOLETE??
 bool g_isAdvertising = false; 
 
 bool g_getValue = false;          /**< Menu is waiting for value from BLE application                 */
@@ -26,4 +37,4 @@ bool g_sendNUS = false;           /**< Flag to signal Nordic UART Service to sen
 bool g_readPressureSensor = false;
 
 /*Global variables*/
-float EMA_alpha = 0.4;            /**< Exponential Moving Average 'alpha' Coefficient, initialized to 0.2  0.4 Seems reasonable*/  
+float EMA_alpha = 0.4;            /**< Exponential Moving Average 'alpha' Coefficient, initialized to 0.4*/  

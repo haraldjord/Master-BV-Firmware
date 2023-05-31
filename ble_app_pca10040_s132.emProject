@@ -168,22 +168,10 @@
         <file file_name="Drivers/SAADC/SAADC.c" />
         <file file_name="Drivers/SDcard/SDcard.c" />
         <file file_name="Drivers/I2C/TMP117.c" />
-        <file file_name="Drivers/TWIM/TWIM.c" />
-        <file file_name="Drivers/TWIM/TWIM_v2.c" />
-        <file file_name="i2c.c">
-          <configuration
-            Name="Common"
-            c_user_include_directories="/Drivers/I2C" />
-          <configuration
-            Name="Debug"
-            build_exclude_from_build="No"
-            c_user_include_directories="/Drivers/I2C;." />
-        </file>
-        <file file_name="i2c.h">
-          <configuration Name="Debug" build_exclude_from_build="No" />
-        </file>
         <file file_name="Drivers/SAADC/modified_nrfx_saadc.c" />
         <file file_name="Drivers/Motor/motor.c" />
+        <file file_name="Drivers/TWIM/TWIM.c" />
+        <file file_name="Drivers/I2C/ICM.c" />
       </folder>
       <folder Name="Program">
         <file file_name="Program/FSM/FSM.c" />
@@ -191,7 +179,6 @@
         <file file_name="Program/Globals/globals.c" />
         <file file_name="Program/Menu/menu.c" />
         <file file_name="Program/Mission/mission.c" />
-        <file file_name="Program/Mission/mockMission.c" />
         <file file_name="Program/Timers/timers.c" />
       </folder>
       <file file_name="main.c" />
